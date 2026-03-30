@@ -36,12 +36,27 @@ export default function CheckoutForm({ arrangement }: { arrangement: Arrangement
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
     setSubmitting(true);
-    setTimeout(() => {
-      router.push(`/order/success?type=order&arrangement=${arrangement.slug}`);
-    }, 1200);
+
+    const res = await fetch("/api/order", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...form,
+        fulfillment,
+        slug: arrangement.slug,
+      }),
+    });
+
+    if (!res.ok) {
+      setSubmitting(false);
+      alert("Something went wrong sending your order. Please try again.");
+      return;
+    }
+
+    router.push(`/order/success?type=order&arrangement=${arrangement.slug}`);
   }
 
   return (

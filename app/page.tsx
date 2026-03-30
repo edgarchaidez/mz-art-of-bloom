@@ -32,8 +32,8 @@ export default function Home() {
         </div>
 
         {/* Decorative circles */}
-        <div className="absolute -top-16 -right-16 w-64 h-64 rounded-full bg-pink-100 opacity-50" />
-        <div className="absolute -bottom-10 -left-10 w-48 h-48 rounded-full bg-green-100 opacity-40" />
+        <div className="absolute -top-16 -right-16 w-80 h-80 rounded-full bg-pink-200 opacity-40" />
+        <div className="absolute -bottom-10 -left-10 w-64 h-64 rounded-full bg-green-200 opacity-40" />
       </section>
 
       {/* Featured Arrangements */}
