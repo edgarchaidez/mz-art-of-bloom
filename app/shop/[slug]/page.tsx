@@ -1,15 +1,16 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getArrangement, arrangements, SHIPPING_FEE } from "@/lib/arrangements";
+import { getArrangement, getAllSlugs, SHIPPING_FEE } from "@/lib/arrangements";
 import ImageGallery from "@/components/ImageGallery";
 
-export function generateStaticParams() {
-  return arrangements.map((a) => ({ slug: a.slug }));
+export async function generateStaticParams() {
+  const slugs = await getAllSlugs();
+  return slugs.map((a) => ({ slug: a.slug }));
 }
 
 export default async function ArrangementPage(props: PageProps<"/shop/[slug]">) {
   const { slug } = await props.params;
-  const arrangement = getArrangement(slug);
+  const arrangement = await getArrangement(slug);
 
   if (!arrangement) notFound();
 

@@ -5,7 +5,7 @@ export default function Footer() {
     <footer className="bg-white border-t border-pink-100 mt-auto">
       <div className="max-w-6xl mx-auto px-6 py-10 flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="text-center md:text-left">
-          <span className="font-script text-2xl text-pink-500">MZ Art of Bloom</span>
+          <span className="font-script text-2xl text-pink-500">Mz Art of Bloom</span>
           <p className="text-sm text-gray-500 mt-1">Handcrafted floral arrangements for every occasion.</p>
         </div>
 

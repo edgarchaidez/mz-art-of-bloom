@@ -4,10 +4,11 @@ import { getArrangement } from "@/lib/arrangements";
 export default async function SuccessPage({
   searchParams,
 }: {
-  searchParams: Promise<{ type?: string; arrangement?: string }>;
+  searchParams: Promise<{ type?: string; arrangement?: string; total?: string }>;
 }) {
-  const { type = "order", arrangement: arrangementSlug } = await searchParams;
-  const arrangement = arrangementSlug ? getArrangement(arrangementSlug) : null;
+  const { type = "order", arrangement: arrangementSlug, total: totalParam } = await searchParams;
+  const arrangement = arrangementSlug ? await getArrangement(arrangementSlug) : null;
+  const total = totalParam ? parseFloat(totalParam) : null;
 
   const isInquiry = type === "inquiry";
 
@@ -35,7 +36,7 @@ export default async function SuccessPage({
             <div className="bg-pink-50 rounded-2xl px-6 py-4 w-full">
               <p className="text-sm text-gray-500">You ordered</p>
               <p className="font-semibold text-gray-900">{arrangement.name}</p>
-              <p className="text-pink-500 font-bold">${arrangement.price}</p>
+              <p className="text-pink-500 font-bold">${total ?? arrangement.price}</p>
             </div>
           )}
           <p className="text-gray-600 leading-relaxed">

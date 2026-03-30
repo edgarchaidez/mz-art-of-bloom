@@ -36,18 +36,34 @@ export default function CheckoutForm({ arrangement }: { arrangement: Arrangement
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
 
+  const stripeEnabled = process.env.NEXT_PUBLIC_STRIPE_ENABLED === "true";
+
   async function handleSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
     setSubmitting(true);
 
+    const payload = { ...form, fulfillment, slug: arrangement.slug };
+
+    if (stripeEnabled) {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        setSubmitting(false);
+        alert("Something went wrong. Please try again.");
+        return;
+      }
+      const { url } = await res.json();
+      window.location.href = url;
+      return;
+    }
+
     const res = await fetch("/api/order", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ...form,
-        fulfillment,
-        slug: arrangement.slug,
-      }),
+      body: JSON.stringify(payload),
     });
 
     if (!res.ok) {
@@ -218,44 +234,50 @@ export default function CheckoutForm({ arrangement }: { arrangement: Arrangement
         />
       </div>
 
-      {/* Mock Payment */}
-      <fieldset className="flex flex-col gap-4">
-        <legend className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-1">
-          Payment (Demo)
-        </legend>
-        <div className="flex flex-col gap-1">
-          <label htmlFor="cardNumber" className="text-sm text-gray-600">Card Number</label>
-          <input
-            id="cardNumber" name="cardNumber" type="text"
-            value={form.cardNumber} onChange={handleChange}
-            placeholder="4242 4242 4242 4242"
-            maxLength={19}
-            className="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white font-mono"
-          />
+      {/* Payment section */}
+      {stripeEnabled ? (
+        <div className="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 text-sm text-blue-700">
+          You&apos;ll be securely redirected to Stripe to complete payment.
         </div>
-        <div className="grid grid-cols-2 gap-4">
+      ) : (
+        <fieldset className="flex flex-col gap-4">
+          <legend className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-1">
+            Payment (Demo)
+          </legend>
           <div className="flex flex-col gap-1">
-            <label htmlFor="cardExpiry" className="text-sm text-gray-600">Expiry</label>
+            <label htmlFor="cardNumber" className="text-sm text-gray-600">Card Number</label>
             <input
-              id="cardExpiry" name="cardExpiry" type="text"
-              value={form.cardExpiry} onChange={handleChange}
-              placeholder="MM / YY"
-              maxLength={7}
+              id="cardNumber" name="cardNumber" type="text"
+              value={form.cardNumber} onChange={handleChange}
+              placeholder="4242 4242 4242 4242"
+              maxLength={19}
               className="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white font-mono"
             />
           </div>
-          <div className="flex flex-col gap-1">
-            <label htmlFor="cardCvc" className="text-sm text-gray-600">CVC</label>
-            <input
-              id="cardCvc" name="cardCvc" type="text"
-              value={form.cardCvc} onChange={handleChange}
-              placeholder="123"
-              maxLength={4}
-              className="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white font-mono"
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col gap-1">
+              <label htmlFor="cardExpiry" className="text-sm text-gray-600">Expiry</label>
+              <input
+                id="cardExpiry" name="cardExpiry" type="text"
+                value={form.cardExpiry} onChange={handleChange}
+                placeholder="MM / YY"
+                maxLength={7}
+                className="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white font-mono"
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label htmlFor="cardCvc" className="text-sm text-gray-600">CVC</label>
+              <input
+                id="cardCvc" name="cardCvc" type="text"
+                value={form.cardCvc} onChange={handleChange}
+                placeholder="123"
+                maxLength={4}
+                className="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white font-mono"
+              />
+            </div>
           </div>
-        </div>
-      </fieldset>
+        </fieldset>
+      )}
 
       {/* Total */}
       <div className="flex flex-col gap-1.5 pt-2 border-t border-gray-100 text-sm">
@@ -280,12 +302,18 @@ export default function CheckoutForm({ arrangement }: { arrangement: Arrangement
         disabled={submitting}
         className="bg-pink-500 text-white px-8 py-4 rounded-full font-medium hover:bg-pink-600 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
       >
-        {submitting ? "Processing..." : `Pay $${total}`}
+        {submitting
+          ? "Processing..."
+          : stripeEnabled
+          ? `Continue to Payment — $${total}`
+          : `Pay $${total}`}
       </button>
 
-      <p className="text-xs text-center text-gray-400">
-        This is a demo checkout. No real charge will be made.
-      </p>
+      {!stripeEnabled && (
+        <p className="text-xs text-center text-gray-400">
+          This is a demo checkout. No real charge will be made.
+        </p>
+      )}
     </form>
   );
 }

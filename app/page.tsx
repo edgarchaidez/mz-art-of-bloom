@@ -2,8 +2,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { getFeaturedArrangements } from "@/lib/arrangements";
 
-export default function Home() {
-  const featured = getFeaturedArrangements();
+
+export default async function Home() {
+  const featured = await getFeaturedArrangements();
 
   return (
     <>

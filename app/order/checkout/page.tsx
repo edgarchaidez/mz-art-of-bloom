@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getArrangement } from "@/lib/arrangements";
 import CheckoutForm from "./CheckoutForm";
@@ -12,7 +13,7 @@ export default async function CheckoutPage({
 
   if (!slug) notFound();
 
-  const arrangement = getArrangement(slug);
+  const arrangement = await getArrangement(slug);
   if (!arrangement) notFound();
 
   return (
@@ -32,10 +33,20 @@ export default async function CheckoutPage({
 
       {/* Order Summary */}
       <div className="bg-pink-50 rounded-2xl p-6 mb-8 flex items-center justify-between gap-4">
-        <div>
-          <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">You&apos;re ordering</p>
-          <p className="font-semibold text-gray-900">{arrangement.name}</p>
-          <p className="text-sm text-gray-500 mt-0.5">{arrangement.occasion.join(" · ")}</p>
+        <div className="flex items-center gap-4">
+          <Link href={`/shop/${arrangement.slug}`} target="_blank" className="relative w-16 h-16 rounded-xl overflow-hidden shrink-0 hover:opacity-80 transition-opacity">
+            <Image
+              src={arrangement.images[0]}
+              alt={arrangement.name}
+              fill
+              className="object-cover"
+            />
+          </Link>
+          <div>
+            <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">You&apos;re ordering</p>
+            <p className="font-semibold text-gray-900">{arrangement.name}</p>
+            <p className="text-sm text-gray-500 mt-0.5">{arrangement.occasion.join(" · ")}</p>
+          </div>
         </div>
         <p className="text-2xl font-bold text-pink-500">${arrangement.price}</p>
       </div>
