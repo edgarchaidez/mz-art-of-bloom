@@ -27,8 +27,8 @@ export async function POST(request: NextRequest) {
     : "Local Pickup";
 
   const { error } = await resend.emails.send({
-    from: "onboarding@resend.dev",
-    to: "chaidez.edgar@gmail.com",
+    from: "orders@mzartofbloom.com",
+    to: "mzartofbloom@gmail.com",
     subject: `New Order — ${arrangement.name} from ${name}`,
     html: `
       <h2>New Order Received</h2>
