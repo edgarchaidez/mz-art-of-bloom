@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { getArrangement } from "@/lib/arrangements";
 
-export default async function SuccessPage(props: PageProps<never>) {
-  const searchParams = await (props as { searchParams: Promise<{ type?: string; arrangement?: string }> }).searchParams;
-  const type = searchParams?.type ?? "order";
-  const arrangementSlug = searchParams?.arrangement;
+export default async function SuccessPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ type?: string; arrangement?: string }>;
+}) {
+  const { type = "order", arrangement: arrangementSlug } = await searchParams;
   const arrangement = arrangementSlug ? getArrangement(arrangementSlug) : null;
 
   const isInquiry = type === "inquiry";

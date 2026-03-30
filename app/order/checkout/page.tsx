@@ -3,9 +3,12 @@ import { notFound } from "next/navigation";
 import { getArrangement } from "@/lib/arrangements";
 import CheckoutForm from "./CheckoutForm";
 
-export default async function CheckoutPage(props: PageProps<never>) {
-  const searchParams = await (props as { searchParams: Promise<{ slug?: string }> }).searchParams;
-  const slug = searchParams?.slug;
+export default async function CheckoutPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ slug?: string }>;
+}) {
+  const { slug } = await searchParams;
 
   if (!slug) notFound();
 
