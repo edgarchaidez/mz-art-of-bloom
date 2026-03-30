@@ -9,7 +9,7 @@ export default function Home() {
     <>
       {/* Hero */}
       <section className="relative bg-pink-50 overflow-hidden">
-        <div className="max-w-6xl mx-auto px-6 py-16 md:py-24 flex flex-col items-center text-center gap-4">
+        <div className="relative max-w-6xl mx-auto px-6 py-16 md:py-24 flex flex-col items-center text-center gap-4" style={{ zIndex: 1 }}>
           <Image src="/logos/logo1.png" alt="Mz Art of Bloom" width={958} height={866} style={{ height: '260px', width: 'auto' }} priority />
           <p className="max-w-xl text-gray-600 text-lg leading-relaxed">
             Beautiful floral arrangements for birthdays, anniversaries, and every
@@ -32,8 +32,8 @@ export default function Home() {
         </div>
 
         {/* Decorative circles */}
-        <div className="absolute -top-16 -right-16 w-80 h-80 rounded-full bg-pink-200 opacity-40" />
-        <div className="absolute -bottom-10 -left-10 w-64 h-64 rounded-full bg-green-200 opacity-40" />
+        <div className="absolute -top-16 -right-16 w-40 h-40 sm:w-80 sm:h-80 rounded-full bg-pink-200 opacity-35" style={{ zIndex: 0 }} />
+        <div className="absolute -bottom-10 -left-10 w-32 h-32 sm:w-64 sm:h-64 rounded-full bg-green-200 opacity-35" style={{ zIndex: 0 }} />
       </section>
 
       {/* Featured Arrangements */}
