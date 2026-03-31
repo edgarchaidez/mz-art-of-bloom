@@ -4,9 +4,9 @@ import { getArrangement } from "@/lib/arrangements";
 export default async function SuccessPage({
   searchParams,
 }: {
-  searchParams: Promise<{ type?: string; arrangement?: string; total?: string }>;
+  searchParams: Promise<{ type?: string; arrangement?: string; total?: string; fulfillment?: string }>;
 }) {
-  const { type = "order", arrangement: arrangementSlug, total: totalParam } = await searchParams;
+  const { type = "order", arrangement: arrangementSlug, total: totalParam, fulfillment } = await searchParams;
   const arrangement = arrangementSlug ? await getArrangement(arrangementSlug) : null;
   const total = totalParam ? parseFloat(totalParam) : null;
 
@@ -39,9 +39,17 @@ export default async function SuccessPage({
               <p className="text-pink-500 font-bold">${total ?? arrangement.price}</p>
             </div>
           )}
+          <div className="bg-green-50 border border-green-200 rounded-2xl px-6 py-4 w-full text-sm text-green-800">
+            {fulfillment === "ship" ? (
+              <>Your arrangement will be <strong>shipped within 1–2 business days</strong> after payment is confirmed.</>
+            ) : fulfillment === "delivery" ? (
+              <>Your arrangement will be <strong>ready for delivery the next day</strong>. We&apos;ll reach out to confirm a delivery window.</>
+            ) : (
+              <>Your arrangement will be <strong>ready for pickup within 24 hours</strong>. We&apos;ll reach out to confirm a pickup time.</>
+            )}
+          </div>
           <p className="text-gray-600 leading-relaxed">
-            Thank you for your order! We&apos;ll be in touch shortly to confirm your arrangement
-            and arrange pickup or delivery details.
+            Thank you for your order! We&apos;ll be in touch shortly to confirm the details.
           </p>
         </div>
       )}

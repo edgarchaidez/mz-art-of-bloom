@@ -9,7 +9,8 @@ const arrangementFields = groq`
   occasion,
   "images": images[].asset->url,
   featured,
-  hasBanner
+  hasBanner,
+  shippingFee
 `;
 
 export const allArrangementsQuery = groq`

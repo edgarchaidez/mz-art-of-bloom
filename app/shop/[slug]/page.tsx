@@ -1,7 +1,23 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getArrangement, getAllSlugs, SHIPPING_FEE } from "@/lib/arrangements";
 import ImageGallery from "@/components/ImageGallery";
+
+export async function generateMetadata(props: PageProps<"/shop/[slug]">): Promise<Metadata> {
+  const { slug } = await props.params;
+  const arrangement = await getArrangement(slug);
+  if (!arrangement) return {};
+  return {
+    title: arrangement.name,
+    description: arrangement.description,
+    openGraph: {
+      title: arrangement.name,
+      description: arrangement.description,
+      images: arrangement.images[0] ? [arrangement.images[0]] : [],
+    },
+  };
+}
 
 export async function generateStaticParams() {
   const slugs = await getAllSlugs();
@@ -62,13 +78,13 @@ export default async function ArrangementPage(props: PageProps<"/shop/[slug]">) 
             <p className="font-medium text-gray-800">Made to order</p>
             {arrangement.material === "artificial" ? (
               <p>
-                This arrangement can be <strong>shipped anywhere</strong> (flat rate +${SHIPPING_FEE}) or
-                picked up locally. You&apos;ll choose at checkout.
+                This arrangement can be <strong>shipped within the US</strong> (+${arrangement.shippingFee ?? SHIPPING_FEE}, 1–2 business days) or
+                picked up locally within 24 hours. You&apos;ll choose at checkout.
               </p>
             ) : (
               <p>
-                This is a <strong>fresh floral arrangement</strong> and is available for{" "}
-                <strong>local pickup only</strong>. We&apos;ll reach out after your order to coordinate.
+                This is a <strong>fresh floral arrangement</strong> available for{" "}
+                <strong>local pickup or delivery</strong> within 24 hours. We&apos;ll reach out to coordinate.
               </p>
             )}
           </div>

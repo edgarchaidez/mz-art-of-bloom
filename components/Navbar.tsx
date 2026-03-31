@@ -13,7 +13,7 @@ export default function Navbar() {
         {/* Logo / Brand */}
         <Link href="/" className="flex items-center gap-3">
           <Image src="/logos/logo1.png" alt="MZ Art of Bloom" width={958} height={866} style={{ height: '52px', width: 'auto' }} />
-          <span className="font-script text-2xl text-pink-500">Mz Art of Bloom</span>
+          <span className="font-script text-2xl text-pink-500">MZ Art of Bloom</span>
         </Link>
 
         {/* Desktop Nav */}

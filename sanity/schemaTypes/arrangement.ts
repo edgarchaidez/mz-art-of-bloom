@@ -68,6 +68,13 @@ export const arrangementSchema = defineType({
       validation: (Rule) => Rule.required().min(1),
     }),
     defineField({
+      name: "shippingFee",
+      title: "Shipping Fee ($)",
+      type: "number",
+      description: "Override the default shipping fee for this arrangement. Leave blank to use the default ($15).",
+      validation: (Rule) => Rule.positive(),
+    }),
+    defineField({
       name: "featured",
       title: "Featured on homepage",
       type: "boolean",

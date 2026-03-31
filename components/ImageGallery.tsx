@@ -13,14 +13,17 @@ export default function ImageGallery({ images, name }: { images: string[]; name:
     <div className="flex flex-col gap-3">
       {/* Main image */}
       <div className="relative aspect-square rounded-3xl overflow-hidden bg-pink-100 shadow-sm">
-        <Image
-          src={images[current]}
-          alt={`${name} - photo ${current + 1}`}
-          fill
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, 50vw"
-          priority
-        />
+        {images.map((src, i) => (
+          <Image
+            key={src}
+            src={src}
+            alt={`${name} - photo ${i + 1}`}
+            fill
+            className={`object-cover transition-opacity duration-200 ${i === current ? "opacity-100" : "opacity-0"}`}
+            sizes="(max-width: 768px) 100vw, 50vw"
+            priority={i === 0}
+          />
+        ))}
 
         {/* Arrows — only show if more than one image */}
         {images.length > 1 && (

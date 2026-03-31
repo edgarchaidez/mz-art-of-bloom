@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { getArrangements } from "@/lib/arrangements";
 import ShopCatalog from "@/components/ShopCatalog";
+
+export const metadata: Metadata = {
+  title: "Shop",
+  description: "Browse our full catalog of handcrafted floral arrangements. Available for local pickup, delivery in the Phoenix metro area, and shipping nationwide.",
+};
 
 export default async function ShopPage() {
   const arrangements = await getArrangements();

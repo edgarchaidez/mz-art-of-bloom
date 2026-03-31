@@ -30,11 +30,22 @@ export default async function Home() {
               Request Custom Order
             </Link>
           </div>
+
         </div>
 
         {/* Decorative circles */}
         <div className="absolute -top-16 -right-16 w-40 h-40 sm:w-80 sm:h-80 rounded-full bg-pink-200 opacity-35" style={{ zIndex: 0 }} />
         <div className="absolute -bottom-10 -left-10 w-32 h-32 sm:w-64 sm:h-64 rounded-full bg-green-200 opacity-35" style={{ zIndex: 0 }} />
+
+        {/* Contact strip */}
+        <div className="w-full py-3" style={{ zIndex: 1, position: 'relative' }}>
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-sm text-gray-500">
+            <span className="flex items-center gap-1.5">📍 Phoenix, AZ</span>
+            <span className="flex items-center gap-1.5">📞 480-749-8548</span>
+            <span className="flex items-center gap-1.5">📧 mzartofbloom@gmail.com</span>
+            <Link href="https://instagram.com/mzartofbloom" target="_blank" className="flex items-center gap-1.5 hover:text-pink-500 transition-colors">📸 Instagram</Link>
+          </div>
+        </div>
       </section>
 
       {/* Featured Arrangements */}
@@ -46,12 +57,12 @@ export default async function Home() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="flex flex-wrap justify-center gap-8">
           {featured.map((arrangement) => (
             <Link
               key={arrangement.slug}
               href={`/shop/${arrangement.slug}`}
-              className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-pink-50"
+              className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-pink-50 w-72"
             >
               <div className="relative aspect-square bg-pink-100 overflow-hidden">
                 <Image
