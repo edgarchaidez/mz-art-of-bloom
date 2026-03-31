@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import CustomOrderForm from "./CustomOrderForm";
+
+export const metadata: Metadata = {
+  title: "Custom Order",
+  description: "Request a custom floral arrangement for any occasion. Tell us your vision and we'll create something beautiful just for you.",
+};
 
 export default function CustomOrderPage() {
   return (

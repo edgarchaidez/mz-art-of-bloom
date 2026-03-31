@@ -1,8 +1,15 @@
+import type { Metadata } from "next";
 import Link from "next/link";
-import { arrangements } from "@/lib/arrangements";
+import { getArrangements } from "@/lib/arrangements";
 import ShopCatalog from "@/components/ShopCatalog";
 
-export default function ShopPage() {
+export const metadata: Metadata = {
+  title: "Shop",
+  description: "Browse our full catalog of handcrafted floral arrangements. Available for local pickup, delivery in the Phoenix metro area, and shipping nationwide.",
+};
+
+export default async function ShopPage() {
+  const arrangements = await getArrangements();
   return (
     <div className="max-w-6xl mx-auto px-6 py-16">
       {/* Header */}

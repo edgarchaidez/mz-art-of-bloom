@@ -12,6 +12,8 @@ export default function Footer() {
         <nav className="flex gap-6 text-sm text-gray-600">
           <Link href="/shop" className="hover:text-pink-500 transition-colors">Shop</Link>
           <Link href="/order/custom" className="hover:text-pink-500 transition-colors">Custom Order</Link>
+          <Link href="https://instagram.com/mzartofbloom" target="_blank" className="hover:text-pink-500 transition-colors">Instagram</Link>
+          <Link href="https://tiktok.com/@mzartofbloom" target="_blank" className="hover:text-pink-500 transition-colors">TikTok</Link>
         </nav>
 
         <p className="text-xs text-gray-400">© {new Date().getFullYear()} MZ Art of Bloom. All rights reserved.</p>
