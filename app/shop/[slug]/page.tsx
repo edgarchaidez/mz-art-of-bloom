@@ -99,7 +99,7 @@ export default async function ArrangementPage(props: PageProps<"/shop/[slug]">) 
 
           <Link
             href="/order/custom"
-            className="text-center text-sm text-pink-500 hover:underline"
+            className="text-center text-sm text-green-600 hover:underline"
           >
             Want something custom? Send an inquiry →
           </Link>

@@ -8,9 +8,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-emilys-candy);
-  --font-script: var(--font-emilys-candy);
-  --font-josefin: var(--font-josefin);
+  --font-sans: var(--font-body);
+  --font-script: var(--font-lobster-two);
+
 
   /* Brand palette */
   --color-pink-50: #fdf2f8;
@@ -39,5 +39,6 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-emilys-candy);
+  font-family: var(--font-body);
 }
+

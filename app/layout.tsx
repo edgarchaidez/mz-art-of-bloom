@@ -1,31 +1,19 @@
 import type { Metadata } from "next";
-import { Lato, Great_Vibes, Josefin_Sans, Emilys_Candy } from "next/font/google";
+import { Lobster_Two, Lato } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
+const lobsterTwo = Lobster_Two({
+  variable: "--font-lobster-two",
+  subsets: ["latin"],
+  weight: ["400", "700"],
+});
+
 const lato = Lato({
-  variable: "--font-lato",
+  variable: "--font-body",
   subsets: ["latin"],
   weight: ["300", "400", "700"],
-});
-
-const greatVibes = Great_Vibes({
-  variable: "--font-great-vibes",
-  subsets: ["latin"],
-  weight: "400",
-});
-
-const josefinSans = Josefin_Sans({
-  variable: "--font-josefin",
-  subsets: ["latin"],
-  weight: ["600"],
-});
-
-const emilysCandyFont = Emilys_Candy({
-  variable: "--font-emilys-candy",
-  subsets: ["latin"],
-  weight: "400",
 });
 
 
@@ -52,7 +40,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${lato.variable} ${greatVibes.variable} ${josefinSans.variable} ${emilysCandyFont.variable} h-full antialiased`}>
+    <html lang="en" className={`${lobsterTwo.variable} ${lato.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-background text-foreground font-sans">
         <Navbar />
         <main className="flex-1">{children}</main>
