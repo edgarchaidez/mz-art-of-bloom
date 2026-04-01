@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import Stripe from "stripe";
-import { getArrangement, SHIPPING_FEE, DELIVERY_FEE, DELIVERY_ZIP_CODES } from "@/lib/arrangements";
+import { getArrangement, getSiteSettings, SHIPPING_FEE, DELIVERY_FEE, DELIVERY_ZIP_CODES } from "@/lib/arrangements";
 
 export async function POST(request: NextRequest) {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
@@ -15,13 +15,16 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: "Missing required fields." }, { status: 400 });
   }
 
-  const arrangement = await getArrangement(slug);
+  const [arrangement, settings] = await Promise.all([getArrangement(slug), getSiteSettings()]);
   if (!arrangement) {
     return Response.json({ error: "Arrangement not found." }, { status: 404 });
   }
+  if (!settings.acceptingOrders || arrangement.available === false) {
+    return Response.json({ error: "This arrangement is not available for order." }, { status: 400 });
+  }
 
   // Validate delivery eligibility server-side
-  if (fulfillment === "delivery" && !DELIVERY_ZIP_CODES.has(zip)) {
+  if (fulfillment === "delivery" && !DELIVERY_ZIP_CODES.has(zip.slice(0, 5))) {
     return Response.json({ error: "Delivery is not available to this ZIP code." }, { status: 400 });
   }
 

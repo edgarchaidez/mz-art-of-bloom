@@ -10,7 +10,8 @@ const arrangementFields = groq`
   "images": images[].asset->url,
   featured,
   hasBanner,
-  shippingFee
+  shippingFee,
+  available
 `;
 
 export const allArrangementsQuery = groq`
@@ -27,4 +28,8 @@ export const arrangementBySlugQuery = groq`
 
 export const allSlugsQuery = groq`
   *[_type == "arrangement"] { "slug": slug.current }
+`;
+
+export const siteSettingsQuery = groq`
+  *[_type == "siteSettings" && _id == "siteSettings"][0] { acceptingOrders, unavailableMessage }
 `;

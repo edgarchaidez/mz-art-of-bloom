@@ -4,7 +4,13 @@ import {
   featuredArrangementsQuery,
   arrangementBySlugQuery,
   allSlugsQuery,
+  siteSettingsQuery,
 } from "@/sanity/lib/queries";
+
+export type SiteSettings = {
+  acceptingOrders: boolean;
+  unavailableMessage: string;
+};
 
 export const SHIPPING_FEE = 15;
 export const DELIVERY_FEE = 15;
@@ -52,6 +58,7 @@ export type Arrangement = {
   material: Material;
   hasBanner: boolean;
   shippingFee?: number;
+  available: boolean;
 };
 
 export async function getArrangements(): Promise<Arrangement[]> {
@@ -68,4 +75,9 @@ export async function getFeaturedArrangements(): Promise<Arrangement[]> {
 
 export async function getAllSlugs(): Promise<{ slug: string }[]> {
   return client.fetch(allSlugsQuery);
+}
+
+export async function getSiteSettings(): Promise<SiteSettings> {
+  const settings = await client.fetch(siteSettingsQuery);
+  return settings ?? { acceptingOrders: true, unavailableMessage: "We're currently not accepting new orders. Please check back soon!" };
 }

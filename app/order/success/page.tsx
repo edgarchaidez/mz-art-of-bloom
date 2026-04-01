@@ -55,7 +55,7 @@ export default async function SuccessPage({
           )}
           <div className="bg-green-50 border border-green-200 rounded-2xl px-6 py-4 w-full text-sm text-green-800">
             {fulfillment === "ship" ? (
-              <>Your arrangement will be <strong>shipped within 1–2 business days</strong> after payment is confirmed.</>
+              <>Your arrangement will be <strong>shipped within 1–2 business days</strong> and should arrive in <strong>4–5 business days</strong> after payment is confirmed.</>
             ) : fulfillment === "delivery" ? (
               <>Your arrangement will be <strong>ready for delivery the next day</strong>. We&apos;ll reach out to confirm a delivery window.</>
             ) : (
