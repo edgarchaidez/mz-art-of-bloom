@@ -25,7 +25,7 @@ export default async function Home() {
             </Link>
             <Link
               href="/order/custom"
-              className="border border-pink-400 text-pink-600 px-8 py-3 rounded-full text-sm font-medium hover:bg-pink-50 transition-colors"
+              className="border border-green-500 text-green-600 px-8 py-3 rounded-full text-sm font-medium hover:bg-green-50 transition-colors"
             >
               Request Custom Order
             </Link>
@@ -38,12 +38,67 @@ export default async function Home() {
         <div className="absolute -bottom-10 -left-10 w-32 h-32 sm:w-64 sm:h-64 rounded-full bg-green-200 opacity-35" style={{ zIndex: 0 }} />
 
         {/* Contact strip */}
-        <div className="w-full py-3" style={{ zIndex: 1, position: 'relative' }}>
-          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-sm text-gray-500">
-            <span className="flex items-center gap-1.5">📍 Phoenix, AZ</span>
-            <span className="flex items-center gap-1.5">📞 480-749-8548</span>
-            <span className="flex items-center gap-1.5">📧 mzartofbloom@gmail.com</span>
-            <Link href="https://instagram.com/mzartofbloom" target="_blank" className="flex items-center gap-1.5 hover:text-pink-500 transition-colors">📸 Instagram</Link>
+        <div className="w-full py-4" style={{ zIndex: 1, position: 'relative' }}>
+          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10">
+            {[
+              {
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/>
+                  </svg>
+                ),
+                id: "location",
+                label: <>Phoenix, AZ<br className="hidden sm:block" /> (19th Ave & Southern)</>,
+                href: undefined,
+              },
+              {
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+                    <path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1C10.61 21 3 13.39 3 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.46.57 3.58a1 1 0 01-.24 1.01l-2.21 2.2z"/>
+                  </svg>
+                ),
+                id: "phone",
+                label: "(480)-749-8548",
+                href: "tel:4807498548",
+              },
+              {
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+                    <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                  </svg>
+                ),
+                id: "email",
+                label: "mzartofbloom@gmail.com",
+                href: "mailto:mzartofbloom@gmail.com",
+              },
+              {
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.366.062 2.633.334 3.608 1.308.975.975 1.246 2.242 1.308 3.608.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.062 1.366-.334 2.633-1.308 3.608-.975.975-2.242 1.246-3.608 1.308-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.366-.062-2.633-.334-3.608-1.308-.975-.975-1.246-2.242-1.308-3.608C2.175 15.584 2.163 15.204 2.163 12s.012-3.584.07-4.85c.062-1.366.334-2.633 1.308-3.608.975-.975 2.242-1.246 3.608-1.308C8.416 2.175 8.796 2.163 12 2.163zm0-2.163C8.741 0 8.333.014 7.053.072 5.197.157 3.355.673 2.014 2.014.673 3.355.157 5.197.072 7.053.014 8.333 0 8.741 0 12c0 3.259.014 3.667.072 4.947.085 1.856.601 3.698 1.942 5.039 1.341 1.341 3.183 1.857 5.039 1.942C8.333 23.986 8.741 24 12 24s3.667-.014 4.947-.072c1.856-.085 3.698-.601 5.039-1.942 1.341-1.341 1.857-3.183 1.942-5.039.058-1.28.072-1.688.072-4.947s-.014-3.667-.072-4.947c-.085-1.856-.601-3.698-1.942-5.039C20.645.673 18.803.157 16.947.072 15.667.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zm0 10.162a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+                  </svg>
+                ),
+                id: "instagram",
+                label: "mzartofbloom_florist",
+                href: "https://instagram.com/mzartofbloom_florist",
+                target: "_blank",
+              },
+            ].map(({ icon, label, href, target, id }) => {
+              const inner = (
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-full bg-green-500 text-white flex items-center justify-center flex-shrink-0">
+                    {icon}
+                  </div>
+                  <span className="text-sm text-gray-600">{label}</span>
+                </div>
+              );
+              return href ? (
+                <Link key={id} href={href} target={target} className="hover:opacity-80 transition-opacity">
+                  {inner}
+                </Link>
+              ) : (
+                <div key={id}>{inner}</div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -103,7 +158,7 @@ export default async function Home() {
         <div className="text-center mt-12">
           <Link
             href="/shop"
-            className="border border-pink-400 text-pink-600 px-8 py-3 rounded-full text-sm font-medium hover:bg-pink-50 transition-colors"
+            className="border border-green-500 text-green-600 px-8 py-3 rounded-full text-sm font-medium hover:bg-green-50 transition-colors"
           >
             View All Arrangements
           </Link>
@@ -135,7 +190,7 @@ export default async function Home() {
               },
             ].map(({ step, title, desc }) => (
               <div key={step} className="flex flex-col items-center gap-3">
-                <span className="w-12 h-12 rounded-full bg-pink-500 text-white flex items-center justify-center text-sm font-bold">
+                <span className="w-12 h-12 rounded-full bg-green-500 text-white flex items-center justify-center text-sm font-bold">
                   {step}
                 </span>
                 <h3 className="font-semibold text-gray-800">{title}</h3>

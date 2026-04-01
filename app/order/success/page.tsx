@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getArrangement } from "@/lib/arrangements";
 
 export default async function SuccessPage({
@@ -33,10 +34,23 @@ export default async function SuccessPage({
       ) : (
         <div className="flex flex-col items-center gap-3">
           {arrangement && (
-            <div className="bg-pink-50 rounded-2xl px-6 py-4 w-full">
-              <p className="text-sm text-gray-500">You ordered</p>
-              <p className="font-semibold text-gray-900">{arrangement.name}</p>
-              <p className="text-pink-500 font-bold">${total ?? arrangement.price}</p>
+            <div className="bg-pink-50 rounded-2xl overflow-hidden w-full flex items-center gap-4 pr-6">
+              {arrangement.images[0] && (
+                <div className="relative w-24 h-24 shrink-0">
+                  <Image
+                    src={arrangement.images[0]}
+                    alt={arrangement.name}
+                    fill
+                    className="object-cover"
+                    sizes="96px"
+                  />
+                </div>
+              )}
+              <div className="py-4 text-left">
+                <p className="text-sm text-gray-500">You ordered</p>
+                <p className="font-semibold text-gray-900">{arrangement.name}</p>
+                <p className="text-pink-500 font-bold">${total ?? arrangement.price}</p>
+              </div>
             </div>
           )}
           <div className="bg-green-50 border border-green-200 rounded-2xl px-6 py-4 w-full text-sm text-green-800">
@@ -57,7 +71,7 @@ export default async function SuccessPage({
       <div className="flex flex-col sm:flex-row gap-4 mt-4">
         <Link
           href="/shop"
-          className="border border-pink-400 text-pink-600 px-8 py-3 rounded-full text-sm font-medium hover:bg-pink-50 transition-colors"
+          className="border border-green-500 text-green-600 px-8 py-3 rounded-full text-sm font-medium hover:bg-green-50 transition-colors"
         >
           Back to Shop
         </Link>
