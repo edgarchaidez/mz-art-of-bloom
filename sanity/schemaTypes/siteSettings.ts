@@ -6,14 +6,6 @@ export const siteSettingsSchema = defineType({
   type: "document",
   fields: [
     defineField({
-      name: "title",
-      title: "Title",
-      type: "string",
-      initialValue: "Site Settings",
-      readOnly: true,
-      hidden: true,
-    }),
-    defineField({
       name: "acceptingOrders",
       title: "Accepting Orders",
       type: "boolean",
@@ -28,4 +20,9 @@ export const siteSettingsSchema = defineType({
       initialValue: "We're currently not accepting new orders. Please check back soon!",
     }),
   ],
+  preview: {
+    prepare() {
+      return { title: "Site Settings" };
+    },
+  },
 });
