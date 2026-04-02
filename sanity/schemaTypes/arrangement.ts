@@ -75,6 +75,13 @@ export const arrangementSchema = defineType({
       validation: (Rule) => Rule.positive(),
     }),
     defineField({
+      name: "available",
+      title: "Available for order",
+      type: "boolean",
+      description: "Uncheck to mark this specific arrangement as sold out.",
+      initialValue: true,
+    }),
+    defineField({
       name: "featured",
       title: "Featured on homepage",
       type: "boolean",

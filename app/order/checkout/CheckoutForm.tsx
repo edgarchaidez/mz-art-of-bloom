@@ -24,7 +24,7 @@ export default function CheckoutForm({ arrangement }: { arrangement: Arrangement
   });
 
   const canShip = arrangement.material === "artificial";
-  const canDeliver = DELIVERY_ZIP_CODES.has(form.zip);
+  const canDeliver = DELIVERY_ZIP_CODES.has(form.zip.slice(0, 5));
   const shippingFee = arrangement.shippingFee ?? SHIPPING_FEE;
   const extraCost = fulfillment === "ship" && canShip ? shippingFee
     : fulfillment === "delivery" ? DELIVERY_FEE
@@ -139,7 +139,7 @@ export default function CheckoutForm({ arrangement }: { arrangement: Arrangement
           >
             <span className="text-sm font-medium text-gray-800">Ship to Me</span>
             <span className="text-xs text-gray-500">
-              {canShip ? `+$${shippingFee} · ships within 1–2 business days` : "Natural arrangements — pickup only"}
+              {canShip ? `+$${shippingFee} · arrives in 4–5 business days` : "Natural arrangements — pickup only"}
             </span>
           </button>
         </div>
@@ -196,7 +196,7 @@ export default function CheckoutForm({ arrangement }: { arrangement: Arrangement
                 />
               </div>
             </div>
-            {fulfillment === "delivery" && form.zip.length === 5 && (
+            {fulfillment === "delivery" && form.zip.length >= 5 && (
               canDeliver ? (
                 <p className="text-xs text-green-600 font-medium">✓ We deliver to your area!</p>
               ) : (

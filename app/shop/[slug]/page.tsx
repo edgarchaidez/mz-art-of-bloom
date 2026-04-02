@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getArrangement, getAllSlugs, SHIPPING_FEE } from "@/lib/arrangements";
+import { getArrangement, getAllSlugs, getSiteSettings, SHIPPING_FEE } from "@/lib/arrangements";
 import ImageGallery from "@/components/ImageGallery";
 
 export async function generateMetadata(props: PageProps<"/shop/[slug]">): Promise<Metadata> {
@@ -26,7 +26,7 @@ export async function generateStaticParams() {
 
 export default async function ArrangementPage(props: PageProps<"/shop/[slug]">) {
   const { slug } = await props.params;
-  const arrangement = await getArrangement(slug);
+  const [arrangement, settings] = await Promise.all([getArrangement(slug), getSiteSettings()]);
 
   if (!arrangement) notFound();
 
@@ -78,7 +78,7 @@ export default async function ArrangementPage(props: PageProps<"/shop/[slug]">) 
             <p className="font-medium text-gray-800">Made to order</p>
             {arrangement.material === "artificial" ? (
               <p>
-                This arrangement can be <strong>shipped within the US</strong> (+${arrangement.shippingFee ?? SHIPPING_FEE}, 1–2 business days) or
+                This arrangement can be <strong>shipped within the US</strong> (+${arrangement.shippingFee ?? SHIPPING_FEE}, arrives in 4–5 business days) or
                 picked up locally within 24 hours. You&apos;ll choose at checkout.
               </p>
             ) : (
@@ -90,12 +90,18 @@ export default async function ArrangementPage(props: PageProps<"/shop/[slug]">) 
           </div>
 
           {/* Order Button */}
-          <Link
-            href={`/order/checkout?slug=${arrangement.slug}`}
-            className="bg-pink-500 text-white text-center px-8 py-4 rounded-full font-medium hover:bg-pink-600 transition-colors"
-          >
-            Order This Arrangement — ${arrangement.price}
-          </Link>
+          {settings.acceptingOrders && arrangement.available !== false ? (
+            <Link
+              href={`/order/checkout?slug=${arrangement.slug}`}
+              className="bg-pink-500 text-white text-center px-8 py-4 rounded-full font-medium hover:bg-pink-600 transition-colors"
+            >
+              Order This Arrangement — ${arrangement.price}
+            </Link>
+          ) : (
+            <div className="bg-gray-100 text-gray-500 text-center px-8 py-4 rounded-full font-medium cursor-not-allowed">
+              {!settings.acceptingOrders ? settings.unavailableMessage : "This arrangement is currently unavailable."}
+            </div>
+          )}
 
           <Link
             href="/order/custom"

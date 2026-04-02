@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { getArrangement } from "@/lib/arrangements";
+import { getArrangement, getSiteSettings } from "@/lib/arrangements";
 import CheckoutForm from "./CheckoutForm";
 
 export default async function CheckoutPage({
@@ -13,8 +13,9 @@ export default async function CheckoutPage({
 
   if (!slug) notFound();
 
-  const arrangement = await getArrangement(slug);
+  const [arrangement, settings] = await Promise.all([getArrangement(slug), getSiteSettings()]);
   if (!arrangement) notFound();
+  if (!settings.acceptingOrders || arrangement.available === false) notFound();
 
   return (
     <div className="max-w-2xl mx-auto px-6 py-16">
@@ -51,12 +52,7 @@ export default async function CheckoutPage({
         <p className="text-2xl font-bold text-pink-500">${arrangement.price}</p>
       </div>
 
-      {/* Mock payment notice */}
-      <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-8 text-sm text-amber-700">
-        <strong>Demo mode:</strong> No real payment is processed. This simulates the checkout flow.
-      </div>
-
-      <CheckoutForm arrangement={arrangement} />
+<CheckoutForm arrangement={arrangement} />
     </div>
   );
 }
