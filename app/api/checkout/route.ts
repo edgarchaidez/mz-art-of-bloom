@@ -61,7 +61,9 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  const session = await stripe.checkout.sessions.create({
+  let session: Stripe.Checkout.Session;
+  try {
+    session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
     line_items: lineItems,
     mode: "payment",
@@ -77,6 +79,10 @@ export async function POST(request: NextRequest) {
       extraCost: String(extraCost),
     },
   });
+  } catch (err) {
+    console.error("Stripe error:", err);
+    return Response.json({ error: "Failed to create checkout session. Please try again." }, { status: 500 });
+  }
 
   return Response.json({ url: session.url });
 }

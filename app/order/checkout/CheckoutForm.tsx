@@ -38,23 +38,28 @@ export default function CheckoutForm({ arrangement }: { arrangement: Arrangement
   async function handleSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
     setSubmitting(true);
-
-    const res = await fetch("/api/checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...form, fulfillment, slug: arrangement.slug }),
-    });
-
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      setError(data.error ?? "Something went wrong. Please try again.");
-      setSubmitting(false);
-      return;
-    }
     setError(null);
 
-    const { url } = await res.json();
-    window.location.href = url;
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, fulfillment, slug: arrangement.slug }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error ?? "Something went wrong. Please try again.");
+        setSubmitting(false);
+        return;
+      }
+
+      const { url } = await res.json();
+      window.location.href = url;
+    } catch {
+      setError("Network error. Please check your connection and try again.");
+      setSubmitting(false);
+    }
   }
 
   return (
