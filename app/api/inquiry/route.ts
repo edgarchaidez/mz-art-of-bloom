@@ -1,6 +1,8 @@
 import { NextRequest } from "next/server";
 import { Resend } from "resend";
 
+import { sendWithRetry } from "@/lib/resend";
+
 function esc(str: string) {
   return str
     .replace(/&/g, "&amp;")
@@ -19,7 +21,7 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: "Missing required fields." }, { status: 400 });
   }
 
-  const { error } = await resend.emails.send({
+  const sent = await sendWithRetry(() => resend.emails.send({
     from: "orders@mzartofbloom.com",
     to: "mzartofbloom@gmail.com",
     subject: `New Custom Order Inquiry from ${esc(name)}`,
@@ -37,11 +39,10 @@ export async function POST(request: NextRequest) {
       </table>
       <p style="color:#999;font-size:12px;margin-top:24px">Received at ${new Date().toLocaleString()}</p>
     `,
-  });
+  }));
 
-  if (error) {
-    console.error("Resend error:", error);
-    return Response.json({ error: "Failed to send email." }, { status: 500 });
+  if (!sent) {
+    return Response.json({ error: "Failed to send inquiry. Please try again." }, { status: 500 });
   }
 
   return Response.json({ success: true });

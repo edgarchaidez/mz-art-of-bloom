@@ -2,6 +2,8 @@ import { NextRequest } from "next/server";
 import Stripe from "stripe";
 import { Resend } from "resend";
 
+import { sendWithRetry } from "@/lib/resend";
+
 function esc(str: string) {
   return str
     .replace(/&/g, "&amp;")
@@ -39,7 +41,7 @@ export async function POST(request: NextRequest) {
       : m.fulfillment === "delivery" ? `Deliver to: ${esc(m.addressLine1)}${m.addressLine2 ? `, ${esc(m.addressLine2)}` : ""}, ${esc(m.city)}, ${esc(m.state)} ${esc(m.zip)}`
       : "Local Pickup";
 
-    await resend.emails.send({
+    const sent = await sendWithRetry(() => resend.emails.send({
       from: "orders@mzartofbloom.com",
       to: "mzartofbloom@gmail.com",
       subject: `New Order — ${m.slug} from ${esc(m.name)}`,
@@ -60,7 +62,11 @@ export async function POST(request: NextRequest) {
         </table>
         <p style="color:#999;font-size:12px;margin-top:24px">Received at ${new Date().toLocaleString()}</p>
       `,
-    });
+    }));
+
+    if (!sent) {
+      return Response.json({ error: "Failed to send email." }, { status: 500 });
+    }
   }
 
   return Response.json({ received: true });

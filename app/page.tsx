@@ -39,7 +39,7 @@ export default async function Home() {
 
         {/* Contact strip */}
         <div className="w-full py-4" style={{ zIndex: 1, position: 'relative' }}>
-          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10">
+          <div className="flex justify-center"><div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-3 sm:gap-10">
             {[
               {
                 icon: (
@@ -99,7 +99,7 @@ export default async function Home() {
                 <div key={id}>{inner}</div>
               );
             })}
-          </div>
+          </div></div>
         </div>
       </section>
 
@@ -117,7 +117,7 @@ export default async function Home() {
             <Link
               key={arrangement.slug}
               href={`/shop/${arrangement.slug}`}
-              className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-pink-50 w-72"
+              className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-pink-50 w-full sm:w-72"
             >
               <div className="relative aspect-square bg-pink-100 overflow-hidden">
                 <Image
