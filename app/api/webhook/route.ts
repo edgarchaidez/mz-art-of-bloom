@@ -32,7 +32,6 @@ export async function POST(request: NextRequest) {
     const session = event.data.object as Stripe.Checkout.Session;
     const m = session.metadata!;
 
-    console.log("metadata:", m);
     const extraCost = parseFloat(m.extraCost ?? "0");
     const total = session.amount_total! / 100;
     const arrangementPrice = total - extraCost;
