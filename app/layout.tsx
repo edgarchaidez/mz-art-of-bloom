@@ -23,8 +23,13 @@ export const metadata: Metadata = {
     default: "MZ Art of Bloom",
     template: "%s | MZ Art of Bloom",
   },
-  description: "Handcrafted floral arrangements for birthdays, anniversaries, and every occasion. Based in Phoenix, AZ — local pickup, delivery, and nationwide shipping available.",
-  keywords: ["floral arrangements", "flower bouquets", "Phoenix florist", "custom flowers", "artificial flowers", "birthday flowers", "anniversary bouquet"],
+  description: "Phoenix florist handcrafting custom flower arrangements for birthdays, anniversaries, weddings, quinceañeras, and more. Fresh & artificial options — local pickup, Phoenix delivery, or nationwide shipping.",
+  keywords: [
+    "Phoenix florist", "florist near me", "flower arrangements Phoenix AZ",
+    "custom floral arrangements", "birthday flowers", "anniversary bouquet",
+    "wedding florist Phoenix", "quinceañera flowers", "artificial flower arrangements",
+    "flower delivery Phoenix", "nationwide flower shipping",
+  ],
   openGraph: {
     siteName: "MZ Art of Bloom",
     locale: "en_US",

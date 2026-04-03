@@ -5,7 +5,7 @@ import ShopCatalog from "@/components/ShopCatalog";
 
 export const metadata: Metadata = {
   title: "Shop",
-  description: "Browse our full catalog of handcrafted floral arrangements. Available for local pickup, delivery in the Phoenix metro area, and shipping nationwide.",
+  description: "Shop handcrafted flower arrangements made to order by a Phoenix, AZ florist. Fresh and artificial options for every occasion — pickup, local delivery, or shipped anywhere in the US.",
 };
 
 export default async function ShopPage() {
