@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
     success_url: `${origin}/order/success?type=order&arrangement=${slug}&total=${arrangement.price + extraCost}&fulfillment=${fulfillment}`,
     cancel_url: `${origin}/order/checkout?slug=${slug}`,
     metadata: {
-      slug, name, email, phone: phone || "",
+      slug, arrangementName: arrangement.name, name, email, phone: phone || "",
       fulfillment, bannerText: bannerText || "",
       notes: notes || "",
       addressLine1: addressLine1 || "", addressLine2: addressLine2 || "",
