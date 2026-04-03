@@ -34,7 +34,7 @@ export default async function SuccessPage({
       ) : (
         <div className="flex flex-col items-center gap-3">
           {arrangement && (
-            <div className="bg-pink-50 rounded-2xl overflow-hidden w-full flex items-center gap-4 pr-6">
+            <Link href={`/shop/${arrangementSlug}`} className="bg-pink-50 rounded-2xl overflow-hidden w-full flex items-center gap-4 pr-6 hover:opacity-80 transition-opacity">
               {arrangement.images[0] && (
                 <div className="relative w-24 h-24 shrink-0">
                   <Image
@@ -51,7 +51,7 @@ export default async function SuccessPage({
                 <p className="font-semibold text-gray-900">{arrangement.name}</p>
                 <p className="text-pink-500 font-bold">${total ?? arrangement.price}</p>
               </div>
-            </div>
+            </Link>
           )}
           <div className="bg-green-50 border border-green-200 rounded-2xl px-6 py-4 w-full text-sm text-green-800">
             {fulfillment === "ship" ? (

@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
       html: `
         <h2>New Order Received</h2>
         <table style="border-collapse:collapse;width:100%;max-width:600px">
-          <tr><td style="padding:8px;font-weight:bold;background:#fdf2f8">Arrangement</td><td style="padding:8px">${esc(m.slug)}</td></tr>
+          <tr><td style="padding:8px;font-weight:bold;background:#fdf2f8">Arrangement</td><td style="padding:8px">${esc(m.arrangementName || m.slug)}</td></tr>
           <tr><td style="padding:8px;font-weight:bold;background:#fdf2f8">Price</td><td style="padding:8px">$${arrangementPrice}</td></tr>
           ${extraCost > 0 ? `<tr><td style="padding:8px;font-weight:bold;background:#fdf2f8">${m.fulfillment === "delivery" ? "Delivery" : "Shipping"}</td><td style="padding:8px">+$${extraCost}</td></tr>` : ""}
           <tr><td style="padding:8px;font-weight:bold;background:#fdf2f8">Total</td><td style="padding:8px"><strong>$${total}</strong></td></tr>
