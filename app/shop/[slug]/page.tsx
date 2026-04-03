@@ -84,7 +84,7 @@ export default async function ArrangementPage(props: PageProps<"/shop/[slug]">) 
             ) : (
               <p>
                 This is a <strong>fresh floral arrangement</strong> available for{" "}
-                <strong>local pickup or delivery</strong> within 24 hours. We&apos;ll reach out to coordinate.
+                <strong>local pickup or delivery</strong>{" "}within 24 hours. We&apos;ll reach out to coordinate.
               </p>
             )}
           </div>
