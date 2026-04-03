@@ -3,7 +3,7 @@ import CustomOrderForm from "./CustomOrderForm";
 
 export const metadata: Metadata = {
   title: "Custom Order",
-  description: "Request a custom floral arrangement for any occasion. Tell us your vision and we'll create something beautiful just for you.",
+  description: "Order a custom floral arrangement from a Phoenix, AZ florist. We design bouquets for weddings, quinceañeras, birthdays, anniversaries, and any special occasion — fresh or artificial.",
 };
 
 export default function CustomOrderPage() {

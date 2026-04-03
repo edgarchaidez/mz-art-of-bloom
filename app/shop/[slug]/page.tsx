@@ -8,9 +8,21 @@ export async function generateMetadata(props: PageProps<"/shop/[slug]">): Promis
   const { slug } = await props.params;
   const arrangement = await getArrangement(slug);
   if (!arrangement) return {};
+  const occasionKeywords = arrangement.occasion.map((o) => `${o} flowers`);
+  const materialKeyword = arrangement.material === "artificial"
+    ? "artificial flower arrangement"
+    : "fresh flower arrangement";
   return {
     title: arrangement.name,
-    description: arrangement.description,
+    description: `${arrangement.description} Made to order by a Phoenix, AZ florist. Available for local pickup, delivery, or nationwide shipping.`,
+    keywords: [
+      arrangement.name,
+      "Phoenix florist",
+      materialKeyword,
+      ...occasionKeywords,
+      "custom floral arrangement",
+      "flower arrangement Phoenix AZ",
+    ],
     openGraph: {
       title: arrangement.name,
       description: arrangement.description,
