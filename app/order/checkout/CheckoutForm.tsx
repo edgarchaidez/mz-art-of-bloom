@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { Arrangement } from "@/lib/arrangements";
-import { SHIPPING_FEE, DELIVERY_FEE, DELIVERY_ZIP_CODES } from "@/lib/arrangements";
+import { SHIPPING_FEE, DELIVERY_FEE, DELIVERY_ZIP_CODES, US_STATES } from "@/lib/arrangements";
 
 type Fulfillment = "pickup" | "ship" | "delivery";
 
@@ -25,6 +25,7 @@ export default function CheckoutForm({ arrangement }: { arrangement: Arrangement
 
   const canShip = arrangement.material === "artificial";
   const canDeliver = DELIVERY_ZIP_CODES.has(form.zip.slice(0, 5));
+  const isUSState = form.state.length === 2 && US_STATES.has(form.state.toUpperCase());
   const shippingFee = arrangement.shippingFee ?? SHIPPING_FEE;
   const extraCost = fulfillment === "ship" && canShip ? shippingFee
     : fulfillment === "delivery" ? DELIVERY_FEE
@@ -186,7 +187,10 @@ export default function CheckoutForm({ arrangement }: { arrangement: Arrangement
                   id="state" name="state" type="text" required
                   value={form.state} onChange={handleChange}
                   placeholder="AZ"
+                  minLength={2}
                   maxLength={2}
+                  onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity("Please enter a 2-letter state code (e.g. AZ).")}
+                  onInput={(e) => (e.target as HTMLInputElement).setCustomValidity("")}
                   className="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white uppercase"
                 />
               </div>
@@ -207,6 +211,9 @@ export default function CheckoutForm({ arrangement }: { arrangement: Arrangement
               ) : (
                 <p className="text-xs text-red-500">Sorry, we don&apos;t currently deliver to this ZIP code. Please choose pickup or shipping.</p>
               )
+            )}
+            {fulfillment === "ship" && form.state.length === 2 && !isUSState && (
+              <p className="text-xs text-red-500">We only ship within the United States.</p>
             )}
           </div>
         ) : null}
@@ -270,7 +277,7 @@ export default function CheckoutForm({ arrangement }: { arrangement: Arrangement
 
       <button
         type="submit"
-        disabled={submitting || (fulfillment === "delivery" && !canDeliver)}
+        disabled={submitting || (fulfillment === "delivery" && !canDeliver) || (fulfillment === "ship" && form.state.length === 2 && !isUSState)}
         className="bg-pink-500 text-white px-8 py-4 rounded-full font-medium hover:bg-pink-600 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
       >
         {submitting ? "Processing..." : `Continue to Payment — $${total}`}

@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import Stripe from "stripe";
-import { getArrangement, getSiteSettings, SHIPPING_FEE, DELIVERY_FEE, DELIVERY_ZIP_CODES } from "@/lib/arrangements";
+import { getArrangement, getSiteSettings, SHIPPING_FEE, DELIVERY_FEE, DELIVERY_ZIP_CODES, US_STATES } from "@/lib/arrangements";
 
 export async function POST(request: NextRequest) {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
@@ -26,6 +26,11 @@ export async function POST(request: NextRequest) {
   // Validate delivery eligibility server-side
   if (fulfillment === "delivery" && !DELIVERY_ZIP_CODES.has(zip.slice(0, 5))) {
     return Response.json({ error: "Delivery is not available to this ZIP code." }, { status: 400 });
+  }
+
+  // Validate shipping is within the US
+  if (fulfillment === "ship" && !US_STATES.has(state?.toUpperCase())) {
+    return Response.json({ error: "Shipping is only available within the United States." }, { status: 400 });
   }
 
   const shippingFee = arrangement.shippingFee ?? SHIPPING_FEE;
