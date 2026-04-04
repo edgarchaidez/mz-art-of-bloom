@@ -106,12 +106,12 @@ export default function ImageGallery({ images, name }: { images: string[]; name:
       {/* Lightbox */}
       {lightbox && (
         <div
-          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
+          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center md:gap-6"
           onClick={() => setLightbox(false)}
         >
           {/* Close button */}
           <button
-            className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+            className="absolute top-4 right-4 w-14 h-14 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
             onClick={() => setLightbox(false)}
             aria-label="Close"
           >
@@ -120,51 +120,72 @@ export default function ImageGallery({ images, name }: { images: string[]; name:
             </svg>
           </button>
 
-          {/* Image */}
-          <div
-            className="relative w-full h-full max-w-4xl max-h-[90vh] mx-4"
-            onClick={(e) => e.stopPropagation()}
-          >
+          {/* Desktop prev arrow — beside the image */}
+          {images.length > 1 && (
+            <button
+              onClick={(e) => { e.stopPropagation(); prev(); }}
+              className="hidden md:flex shrink-0 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 items-center justify-center transition-colors"
+              aria-label="Previous photo"
+            >
+              <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+          )}
+
+          {/* Image + mobile arrows */}
+          <div className="relative overflow-hidden" onClick={(e) => e.stopPropagation()}>
             {images.map((src, i) => (
-              <Image
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
                 key={src}
                 src={src}
                 alt={`${name} - photo ${i + 1}`}
-                fill
-                className={`object-contain transition-opacity duration-200 ${i === current ? "opacity-100" : "opacity-0"}`}
-                sizes="(max-width: 768px) 100vw, 50vw"
+                className={`max-w-[calc(100vw-2rem)] md:max-w-[calc(100vw-10rem)] max-h-[80vh] object-contain transition-opacity duration-200 ${i === current ? "opacity-100" : "opacity-0 absolute inset-0"}`}
               />
             ))}
+            {images.length > 1 && (
+              <>
+                <button
+                  onClick={(e) => { e.stopPropagation(); prev(); }}
+                  className="md:hidden absolute left-2 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+                  aria-label="Previous photo"
+                >
+                  <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); next(); }}
+                  className="md:hidden absolute right-2 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+                  aria-label="Next photo"
+                >
+                  <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </>
+            )}
           </div>
 
-          {/* Arrows */}
+          {/* Desktop next arrow — beside the image */}
           {images.length > 1 && (
-            <>
-              <button
-                onClick={(e) => { e.stopPropagation(); prev(); }}
-                className="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
-                aria-label="Previous photo"
-              >
-                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-              <button
-                onClick={(e) => { e.stopPropagation(); next(); }}
-                className="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
-                aria-label="Next photo"
-              >
-                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-            </>
+            <button
+              onClick={(e) => { e.stopPropagation(); next(); }}
+              className="hidden md:flex shrink-0 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 items-center justify-center transition-colors"
+              aria-label="Next photo"
+            >
+              <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
           )}
 
-          {/* Counter */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/60 text-sm">
-            {current + 1} / {images.length}
-          </div>
+          {images.length > 1 && (
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/60 text-sm">
+              {current + 1} / {images.length}
+            </div>
+          )}
         </div>
       )}
     </>
