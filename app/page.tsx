@@ -48,8 +48,9 @@ export default async function Home() {
                   </svg>
                 ),
                 id: "location",
-                label: <>Phoenix, AZ<br className="hidden sm:block" /> (19th Ave & Southern)</>,
-                href: undefined,
+                label: "Phoenix, AZ",
+                href: "https://maps.app.goo.gl/zqQ1NZ629sMmzJMM9?g_st=ifm",
+                target: "_blank",
               },
               {
                 icon: (
