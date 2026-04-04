@@ -1,39 +1,86 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Arrangement } from "@/lib/arrangements";
-import { SHIPPING_FEE, DELIVERY_FEE, DELIVERY_ZIP_CODES, US_STATES } from "@/lib/arrangements";
+import {
+  SHIPPING_FEE,
+  DELIVERY_FEE,
+  DELIVERY_ZIP_CODES,
+  US_STATES,
+} from "@/lib/arrangements";
 
 type Fulfillment = "pickup" | "ship" | "delivery";
 
-export default function CheckoutForm({ arrangement }: { arrangement: Arrangement }) {
+const EMPTY_FORM = {
+  name: "",
+  email: "",
+  phone: "",
+  bannerText: "",
+  notes: "",
+  addressLine1: "",
+  addressLine2: "",
+  city: "",
+  state: "",
+  zip: "",
+};
+
+export default function CheckoutForm({
+  arrangement,
+}: {
+  arrangement: Arrangement;
+}) {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Empty initial state matches SSR output; sessionStorage is restored client-side in the effect.
   const [fulfillment, setFulfillment] = useState<Fulfillment>("pickup");
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    bannerText: "",
-    notes: "",
-    addressLine1: "",
-    addressLine2: "",
-    city: "",
-    state: "",
-    zip: "",
-  });
+  const [form, setForm] = useState(EMPTY_FORM);
+
+  useEffect(() => {
+    // Deferred so setState isn't called synchronously in the effect body.
+    const id = setTimeout(() => {
+      const savedForm = sessionStorage.getItem("checkout_form");
+      const savedFulfillment = sessionStorage.getItem("checkout_fulfillment");
+      if (savedForm) setForm(JSON.parse(savedForm));
+      if (
+        savedFulfillment === "pickup" ||
+        savedFulfillment === "ship" ||
+        savedFulfillment === "delivery"
+      ) {
+        setFulfillment(savedFulfillment as Fulfillment);
+      }
+    }, 0);
+
+    return () => clearTimeout(id);
+  }, []);
 
   const canShip = arrangement.material === "artificial";
   const canDeliver = DELIVERY_ZIP_CODES.has(form.zip.slice(0, 5));
-  const isUSState = form.state.length === 2 && US_STATES.has(form.state.toUpperCase());
+  const isUSState =
+    form.state.length === 2 && US_STATES.has(form.state.toUpperCase());
   const shippingFee = arrangement.shippingFee ?? SHIPPING_FEE;
-  const extraCost = fulfillment === "ship" && canShip ? shippingFee
-    : fulfillment === "delivery" ? DELIVERY_FEE
-    : 0;
+  const extraCost =
+    fulfillment === "ship" && canShip
+      ? shippingFee
+      : fulfillment === "delivery"
+        ? DELIVERY_FEE
+        : 0;
   const total = arrangement.price + extraCost;
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  function handleChange(
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) {
+    const { name, value } = e.target;
+
+    setForm((prev) => {
+      const next = { ...prev, [name]: value };
+      sessionStorage.setItem("checkout_form", JSON.stringify(next));
+      return next;
+    });
+  }
+
+  function handleFulfillment(value: Fulfillment) {
+    setFulfillment(value);
+    sessionStorage.setItem("checkout_fulfillment", value);
   }
 
   async function handleSubmit(e: React.SyntheticEvent) {
@@ -72,29 +119,46 @@ export default function CheckoutForm({ arrangement }: { arrangement: Arrangement
         </legend>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="flex flex-col gap-1">
-            <label htmlFor="name" className="text-sm text-gray-600">Full Name <span className="text-pink-500">*</span></label>
+            <label htmlFor="name" className="text-sm text-gray-600">
+              Full Name <span className="text-pink-500">*</span>
+            </label>
             <input
-              id="name" name="name" type="text" required
-              value={form.name} onChange={handleChange}
+              id="name"
+              name="name"
+              type="text"
+              required
+              value={form.name}
+              onChange={handleChange}
               placeholder="Jane Doe"
               className="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white"
             />
           </div>
           <div className="flex flex-col gap-1">
-            <label htmlFor="email" className="text-sm text-gray-600">Email <span className="text-pink-500">*</span></label>
+            <label htmlFor="email" className="text-sm text-gray-600">
+              Email <span className="text-pink-500">*</span>
+            </label>
             <input
-              id="email" name="email" type="email" required
-              value={form.email} onChange={handleChange}
+              id="email"
+              name="email"
+              type="email"
+              required
+              value={form.email}
+              onChange={handleChange}
               placeholder="jane@example.com"
               className="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white"
             />
           </div>
         </div>
         <div className="flex flex-col gap-1">
-          <label htmlFor="phone" className="text-sm text-gray-600">Phone</label>
+          <label htmlFor="phone" className="text-sm text-gray-600">
+            Phone
+          </label>
           <input
-            id="phone" name="phone" type="tel"
-            value={form.phone} onChange={handleChange}
+            id="phone"
+            name="phone"
+            type="tel"
+            value={form.phone}
+            onChange={handleChange}
             placeholder="(555) 000-0000"
             className="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white"
           />
@@ -109,43 +173,55 @@ export default function CheckoutForm({ arrangement }: { arrangement: Arrangement
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <button
             type="button"
-            onClick={() => setFulfillment("pickup")}
+            onClick={() => handleFulfillment("pickup")}
             className={`flex flex-col items-start gap-1 rounded-xl border-2 px-4 py-3 text-left transition-colors ${
               fulfillment === "pickup"
                 ? "border-pink-500 bg-pink-50"
                 : "border-gray-200 hover:border-pink-200"
             }`}
           >
-            <span className="text-sm font-medium text-gray-800">Local Pickup</span>
-            <span className="text-xs text-gray-500">No additional charge · ready within 24 hrs</span>
+            <span className="text-sm font-medium text-gray-800">
+              Local Pickup
+            </span>
+            <span className="text-xs text-gray-500">
+              No additional charge · ready within 24 hrs
+            </span>
           </button>
           <button
             type="button"
-            onClick={() => setFulfillment("delivery")}
+            onClick={() => handleFulfillment("delivery")}
             className={`flex flex-col items-start gap-1 rounded-xl border-2 px-4 py-3 text-left transition-colors ${
               fulfillment === "delivery"
                 ? "border-pink-500 bg-pink-50"
                 : "border-gray-200 hover:border-pink-200"
             }`}
           >
-            <span className="text-sm font-medium text-gray-800">Local Delivery</span>
-            <span className="text-xs text-gray-500">+${DELIVERY_FEE} · next day · Phoenix metro</span>
+            <span className="text-sm font-medium text-gray-800">
+              Local Delivery
+            </span>
+            <span className="text-xs text-gray-500">
+              +${DELIVERY_FEE} · next day · Phoenix metro
+            </span>
           </button>
           <button
             type="button"
             disabled={!canShip}
-            onClick={() => canShip && setFulfillment("ship")}
+            onClick={() => canShip && handleFulfillment("ship")}
             className={`flex flex-col items-start gap-1 rounded-xl border-2 px-4 py-3 text-left transition-colors ${
               !canShip
                 ? "border-gray-100 bg-gray-50 opacity-50 cursor-not-allowed"
                 : fulfillment === "ship"
-                ? "border-pink-500 bg-pink-50"
-                : "border-gray-200 hover:border-pink-200"
+                  ? "border-pink-500 bg-pink-50"
+                  : "border-gray-200 hover:border-pink-200"
             }`}
           >
-            <span className="text-sm font-medium text-gray-800">Ship to Me</span>
+            <span className="text-sm font-medium text-gray-800">
+              Ship to Me
+            </span>
             <span className="text-xs text-gray-500">
-              {canShip ? `+$${shippingFee} · arrives in 4–5 business days` : "Natural arrangements — pickup only"}
+              {canShip
+                ? `+$${shippingFee} · arrives in 4–5 business days`
+                : "Natural arrangements — pickup only"}
             </span>
           </button>
         </div>
@@ -154,67 +230,111 @@ export default function CheckoutForm({ arrangement }: { arrangement: Arrangement
         {(fulfillment === "ship" && canShip) || fulfillment === "delivery" ? (
           <div className="flex flex-col gap-3 mt-1 p-4 bg-gray-50 rounded-xl border border-gray-100">
             <div className="flex flex-col gap-1">
-              <label htmlFor="addressLine1" className="text-sm text-gray-600">Address <span className="text-pink-500">*</span></label>
+              <label htmlFor="addressLine1" className="text-sm text-gray-600">
+                Address <span className="text-pink-500">*</span>
+              </label>
               <input
-                id="addressLine1" name="addressLine1" type="text" required
-                value={form.addressLine1} onChange={handleChange}
+                id="addressLine1"
+                name="addressLine1"
+                type="text"
+                required
+                value={form.addressLine1}
+                onChange={handleChange}
                 placeholder="123 Main St"
                 className="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white"
               />
             </div>
             <div className="flex flex-col gap-1">
-              <label htmlFor="addressLine2" className="text-sm text-gray-600">Apt / Suite</label>
+              <label htmlFor="addressLine2" className="text-sm text-gray-600">
+                Apt / Suite
+              </label>
               <input
-                id="addressLine2" name="addressLine2" type="text"
-                value={form.addressLine2} onChange={handleChange}
+                id="addressLine2"
+                name="addressLine2"
+                type="text"
+                value={form.addressLine2}
+                onChange={handleChange}
                 placeholder="Apt 4B (optional)"
                 className="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white"
               />
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               <div className="flex flex-col gap-1 col-span-2 sm:col-span-1">
-                <label htmlFor="city" className="text-sm text-gray-600">City <span className="text-pink-500">*</span></label>
+                <label htmlFor="city" className="text-sm text-gray-600">
+                  City <span className="text-pink-500">*</span>
+                </label>
                 <input
-                  id="city" name="city" type="text" required
-                  value={form.city} onChange={handleChange}
+                  id="city"
+                  name="city"
+                  type="text"
+                  required
+                  value={form.city}
+                  onChange={handleChange}
                   placeholder="Phoenix"
                   className="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white"
                 />
               </div>
               <div className="flex flex-col gap-1">
-                <label htmlFor="state" className="text-sm text-gray-600">State <span className="text-pink-500">*</span></label>
+                <label htmlFor="state" className="text-sm text-gray-600">
+                  State <span className="text-pink-500">*</span>
+                </label>
                 <input
-                  id="state" name="state" type="text" required
-                  value={form.state} onChange={handleChange}
+                  id="state"
+                  name="state"
+                  type="text"
+                  required
+                  value={form.state}
+                  onChange={handleChange}
                   placeholder="AZ"
                   minLength={2}
                   maxLength={2}
-                  onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity("Please enter a 2-letter state code (e.g. AZ).")}
-                  onInput={(e) => (e.target as HTMLInputElement).setCustomValidity("")}
+                  onInvalid={(e) =>
+                    (e.target as HTMLInputElement).setCustomValidity(
+                      "Please enter a 2-letter state code (e.g. AZ).",
+                    )
+                  }
+                  onInput={(e) =>
+                    (e.target as HTMLInputElement).setCustomValidity("")
+                  }
                   className="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white uppercase"
                 />
               </div>
               <div className="flex flex-col gap-1">
-                <label htmlFor="zip" className="text-sm text-gray-600">ZIP <span className="text-pink-500">*</span></label>
+                <label htmlFor="zip" className="text-sm text-gray-600">
+                  ZIP <span className="text-pink-500">*</span>
+                </label>
                 <input
-                  id="zip" name="zip" type="text" required
-                  value={form.zip} onChange={handleChange}
+                  id="zip"
+                  name="zip"
+                  type="text"
+                  required
+                  value={form.zip}
+                  onChange={handleChange}
                   placeholder="85001"
                   maxLength={10}
                   className="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white"
                 />
               </div>
             </div>
-            {fulfillment === "delivery" && form.zip.length >= 5 && (
-              canDeliver ? (
-                <p className="text-xs text-green-600 font-medium">✓ We deliver to your area!</p>
+            {fulfillment === "delivery" &&
+              form.zip.length >= 5 &&
+              (canDeliver ? (
+                <p className="text-xs text-green-600 font-medium">
+                  ✓ We deliver to your area!
+                </p>
               ) : (
-                <p className="text-xs text-red-500">Sorry, we don&apos;t currently deliver to this ZIP code. Please choose pickup or shipping.</p>
-              )
-            )}
-            {fulfillment === "ship" && form.state.length === 2 && !isUSState && (
-              <p className="text-xs text-red-500">We only ship within the United States.</p>
-            )}
+                <p className="text-xs text-red-500">
+                  Sorry, we don&apos;t currently deliver to this ZIP code.
+                  Please choose pickup or shipping.
+                </p>
+              ))}
+            {fulfillment === "ship" &&
+              form.state.length === 2 &&
+              !isUSState && (
+                <p className="text-xs text-red-500">
+                  We only ship within the United States.
+                </p>
+              )}
           </div>
         ) : null}
       </fieldset>
@@ -226,22 +346,33 @@ export default function CheckoutForm({ arrangement }: { arrangement: Arrangement
             Custom Banner Text <span className="text-pink-500">*</span>
           </label>
           <input
-            id="bannerText" name="bannerText" type="text" required
-            value={form.bannerText} onChange={handleChange}
+            id="bannerText"
+            name="bannerText"
+            type="text"
+            required
+            value={form.bannerText}
+            onChange={handleChange}
             placeholder='e.g. "Happy Birthday Sofia!" or "Te Quiero Mucho"'
             maxLength={50}
             className="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white"
           />
-          <p className="text-xs text-gray-400">{form.bannerText.length}/50 characters</p>
+          <p className="text-xs text-gray-400">
+            {form.bannerText.length}/50 characters
+          </p>
         </div>
       )}
 
       {/* Order Notes */}
       <div className="flex flex-col gap-1">
-        <label htmlFor="notes" className="text-sm text-gray-600">Order Notes</label>
+        <label htmlFor="notes" className="text-sm text-gray-600">
+          Order Notes
+        </label>
         <textarea
-          id="notes" name="notes" rows={3}
-          value={form.notes} onChange={handleChange}
+          id="notes"
+          name="notes"
+          rows={3}
+          value={form.notes}
+          onChange={handleChange}
           placeholder="Any special requests, preferred pickup time, etc."
           className="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white resize-none"
         />
@@ -277,7 +408,11 @@ export default function CheckoutForm({ arrangement }: { arrangement: Arrangement
 
       <button
         type="submit"
-        disabled={submitting || (fulfillment === "delivery" && !canDeliver) || (fulfillment === "ship" && form.state.length === 2 && !isUSState)}
+        disabled={
+          submitting ||
+          (fulfillment === "delivery" && !canDeliver) ||
+          (fulfillment === "ship" && form.state.length === 2 && !isUSState)
+        }
         className="bg-pink-500 text-white px-8 py-4 rounded-full font-medium hover:bg-pink-600 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
       >
         {submitting ? "Processing..." : `Continue to Payment — $${total}`}
