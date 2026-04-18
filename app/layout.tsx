@@ -19,6 +19,7 @@ const lato = Lato({
 
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.mzartofbloom.com"),
   title: {
     default: "MZ Art of Bloom",
     template: "%s | MZ Art of Bloom",
@@ -52,6 +53,37 @@ export default function RootLayout({
         <main className="flex-1">{children}</main>
         <Footer />
         <Analytics />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Florist",
+              name: "MZ Art of Bloom",
+              url: "https://www.mzartofbloom.com",
+              telephone: "+14807498548",
+              address: {
+                "@type": "PostalAddress",
+                addressLocality: "Phoenix",
+                addressRegion: "AZ",
+                postalCode: "85041",
+                addressCountry: "US",
+              },
+              geo: {
+                "@type": "GeoCoordinates",
+                latitude: 33.3739,
+                longitude: -112.0925,
+              },
+              sameAs: [
+                "https://instagram.com/mzartofbloom_florist",
+                "https://tiktok.com/@mzartofbloom_florist",
+                "https://www.facebook.com/61551322903028/",
+              ],
+              priceRange: "$$",
+              hasMap: "https://maps.app.goo.gl/zqQ1NZ629sMmzJMM9",
+            }),
+          }}
+        />
       </body>
     </html>
   );
