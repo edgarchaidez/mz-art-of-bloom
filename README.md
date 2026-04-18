@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Mz Art of Bloom
 
-## Getting Started
+**[mzartofbloom.com](https://www.mzartofbloom.com)**
 
-First, run the development server:
+E-commerce storefront for a small floral business. Customers can browse arrangements, place orders, and submit custom inquiries.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Features
+
+- **Product catalog** — arrangement grid with detail pages, filtering, and availability control
+- **Checkout flow** — fulfillment selection (pickup / local delivery / shipping), address validation, Stripe payment integration
+- **Custom order inquiries** — form-based inquiry flow with email notifications via Resend
+- **CMS-driven content** — catalog managed through Sanity, no code changes needed to add or update arrangements
+
+## Stack
+
+- **Next.js 16** — App Router, server components, dynamic routing
+- **React 19** — client components, concurrent features
+- **TypeScript**
+- **Tailwind CSS 4** — utility styles via `@theme {}` tokens, no config file
+- **Sanity** — headless CMS for catalog management
+- **Stripe** — hosted checkout for payments
+- **Resend** — transactional email for inquiry notifications
+
+## Project Structure
+
+```
+app/
+  page.tsx                   # Landing page
+  shop/
+    page.tsx                 # Catalog grid
+    [slug]/page.tsx          # Arrangement detail + order CTA
+  order/
+    checkout/
+      page.tsx               # Checkout page (server)
+      CheckoutForm.tsx       # Checkout form with fulfillment, address, sessionStorage persistence
+    custom/
+      page.tsx               # Custom order inquiry page
+      CustomOrderForm.tsx    # Inquiry form
+    success/page.tsx         # Confirmation (orders + inquiries)
+  api/
+    checkout/route.ts        # Creates Stripe Checkout session
+    inquiry/route.ts         # Receives inquiry form, sends email via Resend
+
+lib/
+  arrangements.ts            # Sanity queries + catalog types
+
+components/
+  Navbar.tsx
+  Footer.tsx
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Local Development
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm install
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Copy `.env.example` to `.env.local` and fill in your Stripe, Sanity, and Resend keys.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+> **Note:** When testing the checkout flow in dev, open Chrome DevTools and enable **Disable cache** in the Network tab. Next.js hardcodes `Cache-Control: no-cache` in development which allows BFCache — the production `no-store` header that prevents this is only respected outside of dev mode.
