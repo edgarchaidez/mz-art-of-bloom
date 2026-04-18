@@ -9,7 +9,10 @@ A flower arrangement e-commerce app for a small floral business. Customers can b
 - **Next.js 16.2.1** — App Router, TypeScript
 - **React 19.2.4**
 - **Tailwind CSS 4** — configured via `@theme {}` in `globals.css`, no `tailwind.config.js`
-- **Fonts** — Lato (body), Great Vibes (script headings) via `next/font/google`
+- **Fonts** — Lato (body), Lobster Two (script headings) via `next/font/google`
+- **Sanity** — headless CMS for catalog and site settings
+- **Stripe** — hosted checkout for payments, webhook for order confirmation
+- **Resend** — transactional email for inquiry notifications
 
 ## Project Structure
 
@@ -21,37 +24,43 @@ app/
     [slug]/page.tsx          # Individual arrangement detail + order button
   order/
     checkout/
-      page.tsx               # Mock checkout page (replace with Stripe later)
-      CheckoutForm.tsx       # Client component — fake card form, simulates payment
+      page.tsx               # Checkout page (server component)
+      CheckoutForm.tsx       # Client component — fulfillment selection, address, sessionStorage persistence
     custom/
       page.tsx               # Custom order inquiry page
       CustomOrderForm.tsx    # Client component — inquiry form
     success/page.tsx         # Confirmation page (handles both orders and inquiries)
   api/
-    inquiry/route.ts         # POST — receives custom order form, logs it (wire Resend here)
+    checkout/route.ts        # POST — creates Stripe Checkout session
+    inquiry/route.ts         # POST — receives custom order form, sends email via Resend
+    webhook/route.ts         # POST — Stripe webhook for order confirmation
+  sitemap.ts                 # Auto-generated sitemap from Sanity catalog
+  robots.ts                  # robots.txt
 
 lib/
-  arrangements.ts            # Mock catalog data — swap for Sanity CMS later
+  arrangements.ts            # Sanity queries + catalog types (Arrangement, SiteSettings)
+  resend.ts                  # Resend helper with retry logic
 
 components/
   Navbar.tsx                 # Sticky nav with mobile hamburger menu (client component)
-  Footer.tsx                 # Branded footer
-
-public/
-  arrangements/              # Drop real flower photos here (filenames must match lib/arrangements.ts)
+  Footer.tsx                 # Branded footer with social links
 ```
 
 ## Key Things to Know
 
-- **Mock data**: `lib/arrangements.ts` holds hardcoded arrangements. Each has a `slug` field used as the URL identifier for detail pages (`/shop/pink-bridal-bouquet`, etc.). Replace with Sanity CMS when ready.
-- **Mock payments**: The checkout flow is purely simulated. To go live, integrate Stripe Checkout and replace `app/order/checkout/`.
-- **Email notifications**: `app/api/inquiry/route.ts` currently just `console.log`s submissions. Wire up [Resend](https://resend.com) here to email the business owner on new inquiries.
-- **Photos**: Placeholder image paths are set in `lib/arrangements.ts`. Add real photos to `public/arrangements/` with matching filenames.
-- **Brand colors**: Hot pink `#E91E8C` and leaf green `#4CAF50`, defined as CSS custom properties in `globals.css` under `@theme`.
+- **Catalog**: `lib/arrangements.ts` queries Sanity for arrangements. Each has a `slug` used as the URL identifier (`/shop/pink-bridal-bouquet`). Managed via Sanity Studio at `/studio`.
+- **Checkout**: Stripe Checkout handles payments. `app/api/checkout/route.ts` creates the session, `app/api/webhook/route.ts` handles post-payment events.
+- **Email**: `app/api/inquiry/route.ts` sends inquiry emails via Resend. Uses a retry helper in `lib/resend.ts`.
+- **Fulfillment**: Three options — local pickup, local delivery (ZIP code validated against an allowlist in `lib/arrangements.ts`), and shipping (artificial arrangements only). Fee constants also live in `lib/arrangements.ts`.
+- **Form persistence**: Checkout form saves to `sessionStorage` on every change and restores on mount. Clears when the tab is closed. `Cache-Control: no-store` on the checkout route (via `next.config.ts`) prevents BFCache from freezing the form state on browser back.
+- **Brand colors**: Hot pink `#E91E8C` (`--color-pink-500`) and supporting palette defined in `globals.css` under `@theme`.
+- **Site settings**: Sanity controls `acceptingOrders` flag — when false, all checkout routes return 404.
 
-## TODO (Future)
+## Environment Variables
 
-- [ ] Replace mock data with Sanity CMS (catalog management for non-technical owner)
-- [ ] Integrate Stripe Checkout for real payments
-- [ ] Wire Resend to `app/api/inquiry/route.ts` for email notifications
-- [ ] Add real product photos to `public/arrangements/`
+See `.env.example` for required keys:
+- `RESEND_API_KEY`
+- `NEXT_PUBLIC_SANITY_PROJECT_ID`
+- `NEXT_PUBLIC_SANITY_DATASET`
+- `STRIPE_SECRET_KEY`
+- `STRIPE_WEBHOOK_SECRET`
