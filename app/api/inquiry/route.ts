@@ -52,6 +52,10 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: "Missing required fields." }, { status: 400 });
   }
 
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return Response.json({ error: "Please enter a valid email address." }, { status: 400 });
+  }
+
   // Build add-ons list
   const addonLines: string[] = [];
   if (addonCrown) addonLines.push("Crown (+$15)");
