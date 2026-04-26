@@ -264,7 +264,7 @@ export default function CustomOrderForm() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {([
             { value: "pickup", label: "Local Pickup", description: "Ready within 4 hours" },
-            { value: "delivery", label: "Local Delivery", description: "Within 15 miles of Phoenix" },
+            { value: "delivery", label: "Local Delivery", description: "Within 15 miles" },
             { value: "shipping", label: "Ship to Me", description: "Artificial arrangements only" },
           ] as const).map(({ value, label, description }) => (
             <button key={value} type="button" onClick={() => set("fulfillment", value)}
@@ -279,7 +279,7 @@ export default function CustomOrderForm() {
         {needsAddress && (
           <div className="flex flex-col gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
             {form.fulfillment === "delivery" && (
-              <p className="text-xs text-amber-600">Delivery is available within 15 miles of Phoenix. We&apos;ll confirm your area when we follow up.</p>
+              <p className="text-xs text-amber-600">Delivery is available within 15 miles of our location. We&apos;ll confirm your area when we follow up.</p>
             )}
             <div className="flex flex-col gap-1">
               <label htmlFor="addressLine1" className="text-sm text-gray-600">Address <span className="text-pink-500">*</span></label>
