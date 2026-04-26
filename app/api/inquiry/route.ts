@@ -77,6 +77,9 @@ export async function POST(request: NextRequest) {
 
   // Handle image attachment
   let attachments: { filename: string; content: Buffer }[] | undefined;
+  if (imageFile && imageFile.size > 5 * 1024 * 1024) {
+    return Response.json({ error: "Image must be under 5 MB." }, { status: 400 });
+  }
   if (imageFile && imageFile.size > 0) {
     const arrayBuffer = await imageFile.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
