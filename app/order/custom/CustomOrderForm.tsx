@@ -11,7 +11,6 @@ type FormState = {
   name: string;
   email: string;
   phone: string;
-  budget: string;
   flowerType: FlowerType;
   artificialType: ArtificialType;
   colorPreferences: string;
@@ -33,7 +32,7 @@ type FormState = {
 };
 
 const INITIAL: FormState = {
-  name: "", email: "", phone: "", budget: "",
+  name: "", email: "", phone: "",
   flowerType: "", artificialType: "", colorPreferences: "",
   addonCrown: false, addonPlush: false, addonPlushCharacter: "",
   addonButterflies: false, addonBanner: false, addonBannerPhrase: "",
@@ -42,7 +41,6 @@ const INITIAL: FormState = {
   date: "", time: "", additionalNotes: "",
 };
 
-const BUDGETS = ["Under $50", "$50–$100", "$100–$200", "$200–$300", "$300+"];
 
 const ARTIFICIAL_TYPES: { value: ArtificialType; label: string; description: string }[] = [
   { value: "glitter-roses", label: "Glitter Roses", description: "Artificial roses with a glitter finish" },
@@ -208,14 +206,6 @@ export default function CustomOrderForm() {
             onChange={handleChange} placeholder="e.g. soft pinks, white, blush" className={inputClass} />
         </div>
 
-        {/* Budget */}
-        <div className="flex flex-col gap-1">
-          <label htmlFor="budget" className="text-sm text-gray-600">Budget Range</label>
-          <select id="budget" name="budget" value={form.budget} onChange={handleChange} className={inputClass}>
-            <option value="">No preference</option>
-            {BUDGETS.map((b) => <option key={b} value={b}>{b}</option>)}
-          </select>
-        </div>
       </fieldset>
 
       {/* Add-ons */}
