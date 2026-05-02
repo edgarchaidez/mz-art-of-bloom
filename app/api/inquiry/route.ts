@@ -27,7 +27,6 @@ export async function POST(request: NextRequest) {
   const name = data.get("name") as string | null;
   const email = data.get("email") as string | null;
   const phone = data.get("phone") as string | null;
-  const budget = data.get("budget") as string | null;
   const flowerType = data.get("flowerType") as string | null;
   const artificialType = data.get("artificialType") as string | null;
   const colorPreferences = data.get("colorPreferences") as string | null;
@@ -101,7 +100,6 @@ export async function POST(request: NextRequest) {
       ${sectionHeader("Flower Preferences")}
       ${row("Flower Type", flowerTypeLabel)}
       ${row("Color Preferences", colorPreferences ?? undefined)}
-      ${row("Budget", budget ?? undefined)}
 
       ${addonLines.length ? `
       ${sectionHeader("Add-ons")}
