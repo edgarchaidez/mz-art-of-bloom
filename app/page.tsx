@@ -202,6 +202,26 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* Find Us */}
+      <section className="max-w-6xl mx-auto px-6 py-20">
+        <div className="text-center mb-8">
+          <h2 className="font-script text-5xl text-pink-500 mb-3">Find Us</h2>
+          <p className="text-gray-500 text-sm">Near 19th Ave &amp; Southern, Phoenix, AZ</p>
+        </div>
+        <div className="rounded-2xl overflow-hidden border border-pink-100 shadow-sm">
+          <iframe
+            src="https://maps.google.com/maps?q=loc:33.392301,-112.099186&z=15&output=embed"
+            width="100%"
+            height="400"
+            style={{ border: 0, display: "block" }}
+            allowFullScreen
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            title="MZ Art of Bloom location"
+          />
+        </div>
+      </section>
+
       {/* CTA Banner */}
       <section className="bg-pink-500 py-16">
         <div className="max-w-2xl mx-auto px-6 text-center flex flex-col items-center gap-5">
