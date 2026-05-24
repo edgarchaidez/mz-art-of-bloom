@@ -184,7 +184,7 @@ export default function CheckoutForm({
               Local Pickup
             </span>
             <span className="text-xs text-gray-500">
-              No additional charge · ready within 24 hrs
+              Near 19th Ave &amp; Southern, Phoenix · ready within 24 hrs
             </span>
           </button>
           <button

@@ -253,7 +253,7 @@ export default function CustomOrderForm() {
         <legend className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-1">Fulfillment</legend>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {([
-            { value: "pickup", label: "Local Pickup", description: "Ready within 4 hours" },
+            { value: "pickup", label: "Local Pickup", description: "Near 19th Ave & Southern, Phoenix" },
             { value: "delivery", label: "Local Delivery", description: "Within 15 miles" },
             { value: "shipping", label: "Ship to Me", description: "Artificial arrangements only" },
           ] as const).map(({ value, label, description }) => (

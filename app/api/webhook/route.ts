@@ -47,8 +47,9 @@ export async function POST(request: NextRequest) {
       subject: `New Order — ${m.slug} from ${esc(m.name)}`,
       html: `
         <h2>New Order Received</h2>
+        ${m.imageUrl ? `<img src="${esc(m.imageUrl)}" alt="${esc(m.arrangementName || m.slug)}" style="width:100%;max-width:200px;border-radius:12px;margin-bottom:16px;display:block">` : ""}
         <table style="border-collapse:collapse;width:100%;max-width:600px">
-          <tr><td style="padding:8px;font-weight:bold;background:#fdf2f8">Arrangement</td><td style="padding:8px">${esc(m.arrangementName || m.slug)}</td></tr>
+          <tr><td style="padding:8px;font-weight:bold;background:#fdf2f8">Arrangement</td><td style="padding:8px"><a href="https://www.mzartofbloom.com/shop/${esc(m.slug)}">${esc(m.arrangementName || m.slug)}</a></td></tr>
           <tr><td style="padding:8px;font-weight:bold;background:#fdf2f8">Price</td><td style="padding:8px">$${arrangementPrice}</td></tr>
           ${extraCost > 0 ? `<tr><td style="padding:8px;font-weight:bold;background:#fdf2f8">${m.fulfillment === "delivery" ? "Delivery" : "Shipping"}</td><td style="padding:8px">+$${extraCost}</td></tr>` : ""}
           <tr><td style="padding:8px;font-weight:bold;background:#fdf2f8">Total</td><td style="padding:8px"><strong>$${total}</strong></td></tr>
@@ -67,6 +68,40 @@ export async function POST(request: NextRequest) {
     if (!sent) {
       return Response.json({ error: "Failed to send email." }, { status: 500 });
     }
+
+    const fulfillmentCustomerLabel =
+      m.fulfillment === "ship" ? `Shipping to ${esc(m.addressLine1)}${m.addressLine2 ? `, ${esc(m.addressLine2)}` : ""}, ${esc(m.city)}, ${esc(m.state)} ${esc(m.zip)}`
+      : m.fulfillment === "delivery" ? `Local delivery to ${esc(m.addressLine1)}${m.addressLine2 ? `, ${esc(m.addressLine2)}` : ""}, ${esc(m.city)}, ${esc(m.state)} ${esc(m.zip)}`
+      : "Local pickup";
+
+    await sendWithRetry(() => resend.emails.send({
+      from: "orders@mzartofbloom.com",
+      to: m.email,
+      replyTo: "mzartofbloom@gmail.com",
+      subject: `Your order is confirmed: ${esc(m.arrangementName || m.slug)}!`,
+      html: `
+        <div style="font-family:sans-serif;max-width:600px;margin:0 auto;color:#1f2937">
+          <h1 style="color:#be185d;font-size:24px;margin-bottom:4px">Thank you, ${esc(m.name.split(" ")[0])}! 🌸</h1>
+          <p style="color:#6b7280;margin-top:0">Your order has been received and your payment was successful.</p>
+
+          ${m.imageUrl ? `<img src="${esc(m.imageUrl)}" alt="${esc(m.arrangementName || m.slug)}" style="width:100%;max-width:240px;border-radius:12px;margin:16px 0;display:block">` : ""}
+
+          <table style="border-collapse:collapse;width:100%;margin-bottom:24px">
+            <tr><td style="padding:8px;font-weight:bold;background:#fdf2f8">Arrangement</td><td style="padding:8px">${esc(m.arrangementName || m.slug)}</td></tr>
+            <tr><td style="padding:8px;font-weight:bold;background:#fdf2f8">Total Paid</td><td style="padding:8px"><strong>$${total}</strong></td></tr>
+            <tr><td style="padding:8px;font-weight:bold;background:#fdf2f8">Fulfillment</td><td style="padding:8px">${fulfillmentCustomerLabel}</td></tr>
+            ${m.bannerText ? `<tr><td style="padding:8px;font-weight:bold;background:#fdf2f8">Banner Text</td><td style="padding:8px">"${esc(m.bannerText)}"</td></tr>` : ""}
+            ${m.notes ? `<tr><td style="padding:8px;font-weight:bold;background:#fdf2f8">Notes</td><td style="padding:8px">${esc(m.notes)}</td></tr>` : ""}
+          </table>
+
+          <p style="background:#fdf2f8;border-left:4px solid #e91e8c;padding:12px 16px;border-radius:4px;margin-bottom:24px">
+            We&apos;ll be in touch within 24 hours to confirm your ${m.fulfillment === "pickup" ? "pickup time" : m.fulfillment === "delivery" ? "delivery details" : "shipping details"}. If you have any questions in the meantime, just reply to this email.
+          </p>
+
+          <p style="color:#6b7280;font-size:13px">MZ Art of Bloom</p>
+        </div>
+      `,
+    }));
   }
 
   return Response.json({ received: true });
