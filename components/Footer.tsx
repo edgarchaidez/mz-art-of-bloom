@@ -42,6 +42,7 @@ export default function Footer() {
         <nav className="flex gap-6 text-sm text-gray-600">
           <Link href="/shop" className="hover:text-pink-500 transition-colors">Shop</Link>
           <Link href="/order/custom" className="hover:text-pink-500 transition-colors">Custom Order</Link>
+          <Link href="/refund-policy" className="hover:text-pink-500 transition-colors">Refund Policy</Link>
         </nav>
 
         <div className="flex items-center gap-4">
