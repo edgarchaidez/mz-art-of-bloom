@@ -61,6 +61,13 @@ export const arrangementSchema = defineType({
       validation: (Rule) => Rule.required().min(1),
     }),
     defineField({
+      name: "style",
+      title: "Style",
+      type: "array",
+      of: [{ type: "string" }],
+      description: "Aesthetic categories used for filtering on the shop page (e.g. Goth, Romantic, Boho). Type a name and press Enter to add.",
+    }),
+    defineField({
       name: "images",
       title: "Images",
       type: "array",

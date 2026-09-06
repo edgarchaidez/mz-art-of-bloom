@@ -10,7 +10,6 @@ export default async function SuccessPage({
   const { type = "order", arrangement: arrangementSlug, total: totalParam, fulfillment } = await searchParams;
   const arrangement = arrangementSlug ? await getArrangement(arrangementSlug) : null;
   const total = totalParam ? parseFloat(totalParam) : null;
-
   const isInquiry = type === "inquiry";
 
   return (
