@@ -98,7 +98,12 @@ export async function POST(request: NextRequest) {
             We&apos;ll be in touch within 24 hours to confirm your ${m.fulfillment === "pickup" ? "pickup time" : m.fulfillment === "delivery" ? "delivery details" : "shipping details"}. If you have any questions in the meantime, just reply to this email.
           </p>
 
-          <p style="color:#6b7280;font-size:13px">MZ Art of Bloom</p>
+          <div style="margin-top:24px;background:#fdf2f8;border-radius:12px;padding:20px;text-align:center">
+            <p style="font-size:16px;font-weight:bold;color:#be185d;margin:0 0 8px 0">Happy with your order? 🌸</p>
+            <p style="font-size:14px;color:#6b7280;margin:0 0 16px 0">Leave a review and help us grow!</p>
+            <a href="https://g.page/r/CVCX5YQf0lxwEBI/review" style="background:#e91e8c;color:white;padding:12px 24px;border-radius:999px;text-decoration:none;font-size:14px;font-weight:bold;display:inline-block">Leave a Google Review</a>
+          </div>
+          <p style="color:#6b7280;font-size:13px;margin-top:16px">MZ Art of Bloom</p>
         </div>
       `,
     }));

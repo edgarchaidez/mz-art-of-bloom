@@ -5,38 +5,62 @@ import Link from "next/link";
 import Image from "next/image";
 import type { Arrangement, Material } from "@/lib/arrangements";
 
-type Filter = Material | "all";
+type MaterialFilter = Material | "all";
 
-const filterLabels: { value: Filter; label: string }[] = [
+const materialLabels: { value: MaterialFilter; label: string }[] = [
   { value: "all", label: "All" },
   { value: "artificial", label: "Artificial" },
   { value: "natural", label: "Natural" },
 ];
 
 export default function ShopCatalog({ arrangements }: { arrangements: Arrangement[] }) {
-  const [filter, setFilter] = useState<Filter>("all");
+  const [materialFilter, setMaterialFilter] = useState<MaterialFilter>("all");
+  const [styleFilter, setStyleFilter] = useState<string>("all");
 
-  const filtered =
-    filter === "all" ? arrangements : arrangements.filter((a) => a.material === filter);
+  const styles = Array.from(new Set(arrangements.flatMap((a) => (a.style ?? []).filter(Boolean)))).sort();
+
+  const filtered = arrangements.filter((a) => {
+    if (materialFilter !== "all" && a.material !== materialFilter) return false;
+    if (styleFilter !== "all" && !(a.style ?? []).includes(styleFilter)) return false;
+    return true;
+  });
+
+  const arrow = (
+    <svg className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-pink-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+      <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+
+  const selectClass = "appearance-none border border-pink-200 rounded-xl pl-3 pr-7 py-2 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white cursor-pointer hover:border-pink-400 transition-colors";
 
   return (
     <div>
-      {/* Filter buttons */}
-      <div className="flex items-center gap-2 mb-10">
-        <span className="text-sm text-gray-500 mr-1">Filter:</span>
-        {filterLabels.map(({ value, label }) => (
-          <button
-            key={value}
-            onClick={() => setFilter(value)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-              filter === value
-                ? "bg-pink-500 text-white"
-                : "border border-gray-200 text-gray-600 hover:border-pink-300 hover:text-pink-500"
-            }`}
-          >
-            {label}
-          </button>
-        ))}
+      {/* Filters */}
+      <div className="flex items-center gap-3 mb-10 flex-wrap">
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-gray-500">Material:</span>
+          <div className="relative">
+            <select value={materialFilter} onChange={(e) => setMaterialFilter(e.target.value as MaterialFilter)} className={selectClass}>
+              <option value="all">All</option>
+              {materialLabels.slice(1).map(({ value, label }) => (
+                <option key={value} value={value}>{label}</option>
+              ))}
+            </select>
+            {arrow}
+          </div>
+        </div>
+        {styles.length > 0 && (
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-500">Theme:</span>
+            <div className="relative">
+              <select value={styleFilter} onChange={(e) => setStyleFilter(e.target.value)} className={selectClass}>
+                <option value="all">All</option>
+                {styles.map((s) => <option key={s} value={s}>{s}</option>)}
+              </select>
+              {arrow}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Grid */}

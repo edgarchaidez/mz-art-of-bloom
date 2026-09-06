@@ -60,6 +60,7 @@ export type Arrangement = {
   description: string;
   price: number;
   occasion: string[];
+  style: string[];
   images: string[];
   featured: boolean;
   material: Material;

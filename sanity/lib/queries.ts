@@ -7,6 +7,7 @@ const arrangementFields = groq`
   price,
   material,
   occasion,
+  style,
   "images": images[].asset->url,
   featured,
   hasBanner,

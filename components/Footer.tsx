@@ -43,6 +43,7 @@ export default function Footer() {
           <Link href="/shop" className="hover:text-pink-500 transition-colors">Shop</Link>
           <Link href="/order/custom" className="hover:text-pink-500 transition-colors">Custom Order</Link>
           <Link href="/refund-policy" className="hover:text-pink-500 transition-colors">Refund Policy</Link>
+          <Link href="https://g.page/r/CVCX5YQf0lxwEBI/review" target="_blank" className="hover:text-pink-500 transition-colors">Leave a Review</Link>
         </nav>
 
         <div className="flex items-center gap-4">
