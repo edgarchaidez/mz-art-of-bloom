@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import type { Arrangement } from "@/lib/arrangements";
 import {
   SHIPPING_FEE,
@@ -30,6 +31,7 @@ export default function CheckoutForm({
   arrangement: Arrangement;
 }) {
   const [submitting, setSubmitting] = useState(false);
+  const [policyAccepted, setPolicyAccepted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   // Empty initial state matches SSR output; sessionStorage is restored client-side in the effect.
   const [fulfillment, setFulfillment] = useState<Fulfillment>("pickup");
@@ -54,7 +56,7 @@ export default function CheckoutForm({
   }, []);
 
   const canShip = arrangement.material === "artificial";
-  const canDeliver = DELIVERY_ZIP_CODES.has(form.zip.slice(0, 5));
+  const canDeliver = form.state.trim().toUpperCase() === "AZ" && DELIVERY_ZIP_CODES.has(form.zip.trim().slice(0, 5));
   const isUSState =
     form.state.length === 2 && US_STATES.has(form.state.toUpperCase());
   const shippingFee = arrangement.shippingFee ?? SHIPPING_FEE;
@@ -92,7 +94,7 @@ export default function CheckoutForm({
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, fulfillment, slug: arrangement.slug }),
+        body: JSON.stringify({ ...form, fulfillment, slug: arrangement.slug, policyAccepted }),
       });
 
       if (!res.ok) {
@@ -324,7 +326,7 @@ export default function CheckoutForm({
                 </p>
               ) : (
                 <p className="text-xs text-red-500">
-                  Sorry, we don&apos;t currently deliver to this ZIP code.
+                  Sorry, this address is outside our local delivery area.
                   Please choose pickup or shipping.
                 </p>
               ))}
@@ -403,6 +405,30 @@ export default function CheckoutForm({
         <div className="flex justify-between font-bold text-gray-900 text-base pt-1 border-t border-gray-100">
           <span>Total</span>
           <span className="text-pink-500">${total}</span>
+        </div>
+      </div>
+
+      <div className="rounded-xl border border-pink-200 bg-pink-50 p-4 text-sm text-gray-700">
+        <p className="mb-3">
+          All sales are final, subject to our policy&apos;s exceptions. Orders may be canceled
+          within 1 hour of purchase for a full refund. Eligible shipped artificial bouquets
+          damaged in transit may qualify for a replacement or refund.
+        </p>
+        <div className="flex items-start gap-3">
+          <input
+            id="policyAccepted"
+            type="checkbox"
+            required
+            checked={policyAccepted}
+            onChange={(e) => setPolicyAccepted(e.target.checked)}
+            className="mt-1 h-4 w-4 shrink-0 accent-pink-500"
+          />
+          <label htmlFor="policyAccepted">
+            I have read and agree to the{" "}
+            <Link href="/refund-policy" target="_blank" rel="noopener noreferrer" className="text-pink-600 underline">
+              Refund &amp; Cancellation Policy
+            </Link>.
+          </label>
         </div>
       </div>
 
