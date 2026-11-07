@@ -8,11 +8,15 @@ export async function POST(request: NextRequest) {
 
   const {
     slug, name, email, phone, notes, bannerText,
-    fulfillment, addressLine1, addressLine2, city, state, zip,
+    fulfillment, addressLine1, addressLine2, city, state, zip, policyAccepted,
   } = body;
 
   if (!slug || !name || !email) {
     return Response.json({ error: "Missing required fields." }, { status: 400 });
+  }
+
+  if (policyAccepted !== true) {
+    return Response.json({ error: "Please read and accept the Refund & Cancellation Policy." }, { status: 400 });
   }
 
   const [arrangement, settings] = await Promise.all([getArrangement(slug), getSiteSettings()]);
@@ -24,8 +28,8 @@ export async function POST(request: NextRequest) {
   }
 
   // Validate delivery eligibility server-side
-  if (fulfillment === "delivery" && !DELIVERY_ZIP_CODES.has(zip.slice(0, 5))) {
-    return Response.json({ error: "Delivery is not available to this ZIP code." }, { status: 400 });
+  if (fulfillment === "delivery" && (typeof state !== "string" || state.trim().toUpperCase() !== "AZ" || typeof zip !== "string" || !/^\d{5}(-\d{4})?$/.test(zip.trim()) || !DELIVERY_ZIP_CODES.has(zip.trim().slice(0, 5)))) {
+    return Response.json({ error: "This address is outside our local delivery area. Please choose pickup or shipping." }, { status: 400 });
   }
 
   // Validate shipping is within the US
@@ -83,6 +87,8 @@ export async function POST(request: NextRequest) {
       addressLine1: addressLine1 || "", addressLine2: addressLine2 || "",
       city: city || "", state: state || "", zip: zip || "",
       extraCost: String(extraCost),
+      refundPolicyVersion: "2026-11-06",
+      refundPolicyAcceptedAt: new Date().toISOString(),
     },
   });
   } catch (err) {
